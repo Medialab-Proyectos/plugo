@@ -59,7 +59,7 @@ export function ChargerCard({ charger, compact = false }: { charger: Charger; co
               <Zap className="h-3 w-3" aria-hidden />
               {charger.power} kW
             </span>
-            <span className="inline-flex items-center rounded-full bg-white/5 px-2 py-0.5 text-[10px] text-foreground-muted">
+            <span className="inline-flex items-center rounded-full bg-overlay-1 px-2 py-0.5 text-[10px] text-foreground-muted">
               {charger.connectors.join(" · ")}
             </span>
             {charger.type === "privado" && (
@@ -85,13 +85,13 @@ export function ChargerCard({ charger, compact = false }: { charger: Charger; co
 
       {!compact && (
         <div className="grid grid-cols-2 gap-2 border-t border-border/60 p-3">
-          <Button asChild variant="ghost" className="h-10 rounded-2xl text-foreground hover:bg-white/5">
+          <Button asChild variant="ghost" className="h-10 rounded-2xl text-foreground hover:bg-overlay-hover">
             <Link href={`/cargador/${charger.id}`}>Ver detalle</Link>
           </Button>
           <Button
             asChild
             disabled={!isAvailable}
-            className="h-10 rounded-2xl bg-primary text-primary-foreground hover:bg-primary/90 disabled:bg-white/5 disabled:text-foreground-soft"
+            className="h-10 rounded-2xl bg-primary text-primary-foreground hover:bg-primary/90 disabled:bg-overlay-1 disabled:text-foreground-soft"
           >
             <Link href={isAvailable ? `/reserva/${charger.id}` : "#"}>
               {isAvailable ? "Reservar" : "No disponible"}

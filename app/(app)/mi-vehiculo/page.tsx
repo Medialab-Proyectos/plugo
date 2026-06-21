@@ -23,6 +23,7 @@ import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
 import { usePlugo } from "@/lib/plugo-context"
 import { batteryState } from "@/lib/decision"
+import { realRange, currentConditions } from "@/lib/autonomy"
 import { cn } from "@/lib/utils"
 
 const tips = [
@@ -120,9 +121,14 @@ export default function MiVehiculoPage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-[10px] uppercase tracking-widest text-foreground-soft">
-                      Nivel de batería (referencial)
+                      Autonomía real hoy
                     </p>
-                    <p className="mt-0.5 text-2xl font-semibold tabular-nums">{battery}%</p>
+                    <p className="mt-0.5 text-2xl font-semibold tabular-nums">
+                      ~{realRange(v, battery, currentConditions(state.preferences)).km} km
+                    </p>
+                    <p className="text-[11px] text-foreground-muted">
+                      {battery}% · ajustado por clima y relieve
+                    </p>
                   </div>
                   <Button
                     onClick={() => setBatteryOpen(true)}
@@ -140,7 +146,7 @@ export default function MiVehiculoPage() {
               <button
                 type="button"
                 onClick={() => setBatteryOpen(true)}
-                className="flex w-full items-center justify-between rounded-2xl bg-white/[0.04] px-4 py-3 text-left transition hover:bg-white/[0.07]"
+                className="flex w-full items-center justify-between rounded-2xl bg-overlay-1 px-4 py-3 text-left transition hover:bg-overlay-hover"
               >
                 <div className="flex items-center gap-3">
                   <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/15 text-primary">
@@ -189,10 +195,10 @@ export default function MiVehiculoPage() {
         <GlassCard className="overflow-hidden p-0">
           <Link
             href="/vehiculo/nuevo"
-            className="flex items-center justify-between border-b border-border/60 px-4 py-4 transition-colors hover:bg-white/[0.03]"
+            className="flex items-center justify-between border-b border-border/60 px-4 py-4 transition-colors hover:bg-overlay-hover"
           >
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/[0.05]">
+              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-overlay-1">
                 <Edit3 className="h-4 w-4" />
               </div>
               <div>
@@ -204,10 +210,10 @@ export default function MiVehiculoPage() {
           </Link>
           <Link
             href="/documentos"
-            className="flex items-center justify-between border-b border-border/60 px-4 py-4 transition-colors hover:bg-white/[0.03]"
+            className="flex items-center justify-between border-b border-border/60 px-4 py-4 transition-colors hover:bg-overlay-hover"
           >
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/[0.05]">
+              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-overlay-1">
                 <Calendar className="h-4 w-4" />
               </div>
               <div>
@@ -219,10 +225,10 @@ export default function MiVehiculoPage() {
           </Link>
           <Link
             href="/perfil/preferencias"
-            className="flex items-center justify-between px-4 py-4 transition-colors hover:bg-white/[0.03]"
+            className="flex items-center justify-between px-4 py-4 transition-colors hover:bg-overlay-hover"
           >
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/[0.05]">
+              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-overlay-1">
                 <Settings className="h-4 w-4" />
               </div>
               <div>

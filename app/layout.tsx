@@ -28,14 +28,14 @@ const jetbrains = localFont({
 export const metadata: Metadata = {
   title: "PLUGO — Carga sin ansiedad. Viaja sin límites.",
   description:
-    "PLUGO es el ecosistema premium para propietarios de vehículos eléctricos en Colombia y Latinoamérica. Encuentra cargadores, planea rutas y construye comunidad.",
+    "PLUGO es el ecosistema premium para propietarios de vehículos eléctricos en Colombia y Latinoamérica. Encuentra electrolineras, calcula tu autonomía real según la geografía y planea rutas sin ansiedad.",
   generator: "v0.app",
   applicationName: "PLUGO",
-  keywords: ["EV", "vehículo eléctrico", "cargadores", "Colombia", "PLUGO", "movilidad eléctrica"],
+  keywords: ["EV", "vehículo eléctrico", "electrolineras", "autonomía", "Colombia", "PLUGO", "movilidad eléctrica"],
 }
 
 export const viewport: Viewport = {
-  themeColor: "#070B10",
+  themeColor: "#F5F7F9",
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
@@ -48,23 +48,20 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="es" className={`${inter.variable} ${jetbrains.variable} bg-background`}>
+    <html lang="es" className={`${inter.variable} ${jetbrains.variable} bg-background`} suppressHydrationWarning>
+      <head>
+        {/* Anti-flash: aplica el tema antes del primer paint */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('plugo:theme');var light=t?t==='light':true;var d=document.documentElement;d.classList.toggle('light',light);var meta=document.querySelector('meta[name=theme-color]');if(meta)meta.setAttribute('content',light?'#f5f7f9':'#070b10');}catch(e){}})();`,
+          }}
+        />
+      </head>
       <body className="font-sans antialiased">
         <ThemeProvider>
           <PlugoProvider>
             <div className="min-h-dvh w-full">{children}</div>
-            <Toaster
-              position="top-center"
-              theme="dark"
-              toastOptions={{
-                style: {
-                  background: "rgba(11,15,20,0.95)",
-                  border: "1px solid rgba(255,255,255,0.12)",
-                  color: "#ffffff",
-                  backdropFilter: "blur(16px)",
-                },
-              }}
-            />
+            <Toaster position="top-center" />
           </PlugoProvider>
         </ThemeProvider>
         {process.env.NODE_ENV === "production" && <Analytics />}

@@ -55,7 +55,7 @@ export default function LoginPage() {
         <button
           type="button"
           onClick={() => (mode === "email" ? setMode("social") : router.back())}
-          className="mb-6 flex h-11 w-11 items-center justify-center rounded-full text-foreground hover:bg-white/[0.06] active:scale-95 transition"
+          className="mb-6 flex h-11 w-11 items-center justify-center rounded-full text-foreground hover:bg-overlay-hover active:scale-95 transition"
           aria-label="Volver"
         >
           <ArrowLeft className="h-5 w-5" />

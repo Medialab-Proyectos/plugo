@@ -59,7 +59,7 @@ export function VehicleCard({ compact = false }: { compact?: boolean }) {
           <button
             type="button"
             onClick={() => setOpen(true)}
-            className="flex w-full items-center justify-between border-t border-border/60 px-4 py-3 text-left transition hover:bg-white/5"
+            className="flex w-full items-center justify-between border-t border-border/60 px-4 py-3 text-left transition hover:bg-overlay-hover"
           >
             <div className="flex items-center gap-2">
               <BatteryCharging className="h-4 w-4 text-primary" aria-hidden />

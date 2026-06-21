@@ -84,12 +84,12 @@ export default function ReservaPage() {
             </div>
             <h1 className="text-2xl font-semibold tracking-tight text-balance">Reserva confirmada</h1>
             <p className="mt-2 max-w-[28ch] text-sm text-foreground-muted text-pretty">
-              Tu cargador estará disponible a las {slot}.
+              Tu electrolinera estará disponible a las {slot}.
             </p>
 
             <GlassCard variant="strong" className="mt-6 w-full text-left">
               <div className="space-y-2.5">
-                <Row Icon={MapPin} label="Cargador" value={charger.name} />
+                <Row Icon={MapPin} label="Electrolinera" value={charger.name} />
                 <Row Icon={Calendar} label="Hoy" value={`${slot} · ${duration.label}`} />
                 <Row Icon={CreditCard} label="Total" value={formatCOP(total)} bold />
               </div>
@@ -121,7 +121,7 @@ export default function ReservaPage() {
             <Button
               asChild
               variant="ghost"
-              className="h-12 w-full rounded-2xl text-foreground-muted hover:bg-white/5"
+              className="h-12 w-full rounded-2xl text-foreground-muted hover:bg-overlay-hover"
             >
               <Link href="/inicio">Ir al inicio</Link>
             </Button>
@@ -166,7 +166,7 @@ export default function ReservaPage() {
                     "min-w-[68px] rounded-2xl border px-3 py-2 text-sm transition",
                     slot === s
                       ? "border-primary/60 bg-primary/10 text-primary"
-                      : "border-border bg-card text-foreground hover:bg-white/5",
+                      : "border-border bg-card text-foreground hover:bg-overlay-hover",
                   )}
                 >
                   {s}
@@ -188,7 +188,7 @@ export default function ReservaPage() {
                     "flex flex-col items-start rounded-2xl border p-3 text-left transition",
                     duration.id === d.id
                       ? "border-primary/60 bg-primary/10"
-                      : "border-border bg-card hover:bg-white/5",
+                      : "border-border bg-card hover:bg-overlay-hover",
                   )}
                 >
                   <span className="text-sm font-medium">{d.label}</span>
@@ -263,7 +263,7 @@ function PaymentRow({
       onClick={() => onChange(id)}
       className={cn(
         "flex w-full items-center gap-3 rounded-2xl border p-3 text-left transition",
-        selected ? "border-primary/60 bg-primary/10" : "border-border bg-card hover:bg-white/5",
+        selected ? "border-primary/60 bg-primary/10" : "border-border bg-card hover:bg-overlay-hover",
       )}
     >
       <div

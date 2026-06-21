@@ -8,7 +8,7 @@ const toneClasses: Record<Tone, string> = {
   danger: "bg-destructive/15 text-destructive ring-destructive/30",
   info: "bg-primary/15 text-primary ring-primary/30",
   primary: "bg-primary/15 text-primary ring-primary/30",
-  muted: "bg-white/5 text-foreground-muted ring-white/10",
+  muted: "bg-overlay-1 text-foreground-muted ring-border",
 }
 
 export function StatusBadge({

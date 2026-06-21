@@ -29,7 +29,7 @@ const benefits = [
 ]
 
 const steps = [
-  { num: 1, title: "Verifica tu cargador", description: "Inspección remota gratuita." },
+  { num: 1, title: "Verifica tu electrolinera", description: "Inspección remota gratuita." },
   { num: 2, title: "Configura precio y horarios", description: "PLUGO sugiere tarifas óptimas." },
   { num: 3, title: "Recibe huéspedes", description: "Activación automática y pagos seguros." },
 ]
@@ -48,7 +48,7 @@ export default function AnfitrionPage() {
         <div className="space-y-2">
           <h1 className="font-serif text-3xl font-medium tracking-tight text-foreground">¡Listo, Anfitrión!</h1>
           <p className="max-w-sm text-sm leading-relaxed text-muted-foreground">
-            Recibirás una llamada en las próximas 24h para programar la verificación de tu cargador.
+            Recibirás una llamada en las próximas 24h para programar la verificación de tu electrolinera.
           </p>
         </div>
         <Button onClick={() => router.push("/inicio")} className="h-12 px-8">
@@ -72,7 +72,7 @@ export default function AnfitrionPage() {
         <header>
           <p className="text-xs font-medium uppercase tracking-wider text-primary">Modo Anfitrión</p>
           <h1 className="mt-2 font-serif text-3xl font-medium tracking-tight text-foreground">
-            Configura tu cargador
+            Configura tu electrolinera
           </h1>
           <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
             Completa los datos para empezar a recibir huéspedes.
@@ -133,7 +133,7 @@ export default function AnfitrionPage() {
             className="flex w-full flex-col items-center gap-2 rounded-2xl border border-dashed border-border bg-secondary/30 px-4 py-6 text-center transition hover:border-primary/50"
           >
             <Camera className="h-7 w-7 text-primary" />
-            <p className="text-sm font-medium">Sube fotos de tu cargador</p>
+            <p className="text-sm font-medium">Sube fotos de tu electrolinera</p>
             <p className="text-[11px] text-muted-foreground">Mínimo 2 — máximo 6</p>
           </button>
         </GlassCard>
@@ -166,7 +166,7 @@ export default function AnfitrionPage() {
             Nuevo programa
           </div>
           <h1 className="mt-4 font-serif text-3xl font-medium leading-tight tracking-tight text-foreground text-balance">
-            Convierte tu cargador en ingreso pasivo
+            Convierte tu electrolinera en ingreso pasivo
           </h1>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground text-pretty">
             Únete a la red PLUGO de anfitriones y comparte tu wallbox cuando no lo uses. Sin complicaciones, con

@@ -105,7 +105,7 @@ export default function ServiciosPage() {
                     <p className="truncate text-sm font-semibold">{s.name}</p>
                     <p className="mt-0.5 text-xs text-foreground-muted">{s.city}</p>
                   </div>
-                  <div className="flex items-center gap-1 rounded-full bg-white/[0.05] px-2 py-1 text-xs">
+                  <div className="flex items-center gap-1 rounded-full bg-overlay-1 px-2 py-1 text-xs">
                     <Star className="h-3 w-3 fill-warning text-warning" />
                     <span className="font-medium">{s.rating}</span>
                   </div>
@@ -129,7 +129,7 @@ export default function ServiciosPage() {
                       type="button"
                       disabled
                       aria-disabled="true"
-                      className="rounded-full border border-border bg-white/[0.04] px-4 py-2 text-xs font-semibold text-foreground-muted"
+                      className="rounded-full border border-border bg-overlay-1 px-4 py-2 text-xs font-semibold text-foreground-muted"
                     >
                       Próximamente
                     </button>

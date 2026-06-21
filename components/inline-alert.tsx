@@ -20,8 +20,8 @@ const presets: Record<
   "sin-conexion": {
     Icon: WifiOff,
     tone: "border-border bg-card",
-    ring: "ring-white/10",
-    iconBg: "bg-white/5",
+    ring: "ring-border",
+    iconBg: "bg-overlay-1",
     iconText: "text-foreground-muted",
   },
   incompatible: {

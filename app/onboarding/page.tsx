@@ -13,7 +13,7 @@ const steps = [
   {
     Icon: Compass,
     title: "Tu carro eléctrico, sin incertidumbre",
-    text: "Encuentra cargadores, planea rutas y evita filas antes de salir.",
+    text: "Encuentra electrolineras, planea rutas y evita filas antes de salir.",
   },
   {
     Icon: CalendarCheck,
@@ -23,7 +23,7 @@ const steps = [
   {
     Icon: Users,
     title: "Convierte la carga en comunidad",
-    text: "Usa cargadores privados verificados o publica el tuyo para generar ingresos.",
+    text: "Usa electrolineras privadas verificadas o publica la tuya para generar ingresos.",
   },
 ]
 
@@ -76,7 +76,7 @@ export default function OnboardingPage() {
                 onClick={() => setStep(i)}
                 className={cn(
                   "h-1.5 rounded-full transition-all",
-                  i === step ? "w-8 bg-primary" : "w-1.5 bg-white/15",
+                  i === step ? "w-8 bg-primary" : "w-1.5 bg-overlay-2",
                 )}
               />
             ))}
@@ -95,7 +95,7 @@ export default function OnboardingPage() {
               <Button
                 asChild
                 variant="ghost"
-                className="h-12 w-full rounded-2xl text-foreground hover:bg-white/5"
+                className="h-12 w-full rounded-2xl text-foreground hover:bg-overlay-hover"
               >
                 <Link href="/login">Ya tengo cuenta</Link>
               </Button>

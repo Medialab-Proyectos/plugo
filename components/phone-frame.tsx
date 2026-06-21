@@ -19,7 +19,7 @@ export function PhoneFrame({
   return (
     <div
       className={cn(
-        "relative mx-auto flex h-dvh w-full max-w-[520px] flex-col overflow-y-auto bg-background",
+        "relative mx-auto flex h-dvh w-full max-w-[393px] flex-col overflow-y-auto bg-background text-foreground",
         // Bottom padding: floating nav (56px) + bottom margin (10px) + safe area
         !noBottomPad && "pb-[calc(5rem+env(safe-area-inset-bottom))]",
         className,

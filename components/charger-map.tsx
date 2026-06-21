@@ -19,7 +19,7 @@ export function ChargerMap({
     <div
       className="relative h-full w-full overflow-hidden map-pattern"
       role="img"
-      aria-label="Mapa con cargadores cercanos"
+      aria-label="Mapa con electrolineras cercanas"
     >
       {/* Mock streets */}
       <svg className="absolute inset-0 h-full w-full opacity-30" aria-hidden>

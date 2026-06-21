@@ -157,7 +157,7 @@ export default function ChargerDetailPage() {
                 {charger.amenities.map((a) => (
                   <span
                     key={a}
-                    className="rounded-full bg-white/5 px-2.5 py-1 text-[11px] text-foreground-muted"
+                    className="rounded-full bg-overlay-1 px-2.5 py-1 text-[11px] text-foreground-muted"
                   >
                     {a}
                   </span>
@@ -220,7 +220,7 @@ export default function ChargerDetailPage() {
             <Button
               asChild
               disabled={!isAvailable}
-              className="h-12 rounded-2xl bg-primary px-6 font-semibold text-primary-foreground hover:bg-primary/90 disabled:bg-white/5 disabled:text-foreground-soft"
+              className="h-12 rounded-2xl bg-primary px-6 font-semibold text-primary-foreground hover:bg-primary/90 disabled:bg-overlay-1 disabled:text-foreground-soft"
             >
               <Link href={isAvailable ? `/reserva/${charger.id}` : "#"}>
                 {isAvailable ? "Reservar carga" : "No disponible"}
@@ -257,7 +257,7 @@ function Spec({
 
 function Review({ name, rating, text }: { name: string; rating: number; text: string }) {
   return (
-    <div className="rounded-2xl bg-white/[0.03] p-3">
+    <div className="rounded-2xl bg-overlay-subtle p-3">
       <div className="flex items-center justify-between">
         <p className="text-sm font-medium">{name}</p>
         <div className="flex gap-0.5">
@@ -267,7 +267,7 @@ function Review({ name, rating, text }: { name: string; rating: number; text: st
               className={
                 i < rating
                   ? "h-3.5 w-3.5 fill-warning text-warning"
-                  : "h-3.5 w-3.5 text-white/20"
+                  : "h-3.5 w-3.5 text-foreground-soft/40"
               }
             />
           ))}

@@ -41,7 +41,7 @@ export function PageHeader({
           className={cn(
             // Ghost icon button — clearly NOT a card/input
             "flex h-11 w-11 shrink-0 items-center justify-center rounded-full",
-            "bg-transparent text-foreground hover:bg-white/[0.06] active:scale-95",
+            "bg-transparent text-foreground hover:bg-overlay-hover active:scale-95",
             "transition-[transform,background-color] duration-200",
           )}
         >

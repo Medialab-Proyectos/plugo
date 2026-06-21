@@ -2,49 +2,60 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Car, Home, Map, Navigation, User } from "lucide-react"
+import { CarFront, Grid2X2, Home, MapPinned, UserCircle } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 const tabs = [
   { href: "/inicio", label: "Inicio", Icon: Home },
-  { href: "/mapa", label: "Mapa", Icon: Map },
-  { href: "/rutas", label: "Rutas", Icon: Navigation },
-  { href: "/mi-vehiculo", label: "Vehículo", Icon: Car },
-  { href: "/perfil", label: "Perfil", Icon: User },
+  { href: "/mapa", label: "Mapa", Icon: MapPinned },
+  { href: "/servicios", label: "Explora", Icon: Grid2X2 },
+  { href: "/mi-vehiculo", label: "Vehículos", Icon: CarFront },
+  { href: "/perfil", label: "Perfil", Icon: UserCircle },
 ]
 
 export function BottomNav() {
   const pathname = usePathname()
+  const activeIndex = Math.max(
+    0,
+    tabs.findIndex((t) => pathname === t.href || pathname.startsWith(t.href + "/")),
+  )
 
   return (
     <nav
       aria-label="Navegación principal"
-      className="fixed bottom-0 left-1/2 z-40 w-full max-w-[520px] -translate-x-1/2 px-4 pb-[max(env(safe-area-inset-bottom),10px)]"
+      className="fixed bottom-0 left-1/2 z-40 w-full max-w-[393px] -translate-x-1/2 px-4 pb-[max(env(safe-area-inset-bottom),12px)]"
     >
-      <div className="flex min-h-[56px] items-center justify-around rounded-2xl border border-border bg-background/90 px-1 shadow-[0_4px_24px_-4px_rgba(0,0,0,0.3)] backdrop-blur-2xl">
-        {tabs.map(({ href, label, Icon }) => {
-          const active = pathname === href || pathname.startsWith(href + "/")
+      <div className="glass-strong relative grid grid-cols-5 rounded-full shadow-[0_12px_40px_-16px_rgba(0,0,0,0.5)]">
+        {/* Indicador activo deslizante (spring) */}
+        <span
+          aria-hidden
+          className="nav-indicator pointer-events-none absolute inset-y-1.5 left-0 w-1/5"
+          style={{ transform: `translateX(${activeIndex * 100}%)` }}
+        >
+          <span className="block h-full rounded-full bg-primary/15 ring-1 ring-inset ring-primary/25 mx-1.5" />
+        </span>
 
+        {tabs.map(({ href, label, Icon }, i) => {
+          const active = i === activeIndex
           return (
             <Link
               key={href}
               href={href}
               aria-current={active ? "page" : undefined}
               className={cn(
-                "relative flex min-h-[48px] flex-1 flex-col items-center justify-center gap-0.5 rounded-xl px-1 py-1 transition-all duration-200 active:scale-95",
-                active ? "text-[#00d86f]" : "text-foreground-soft hover:text-foreground-muted",
+                "relative z-10 flex min-h-[56px] flex-col items-center justify-center gap-1 rounded-full px-1 py-2",
+                "transition-[color,transform] duration-200 active:scale-90",
+                active ? "text-primary" : "text-foreground-muted hover:text-foreground",
               )}
             >
-              <Icon className={cn("h-[20px] w-[20px]", active && "fill-current")} aria-hidden />
+              <Icon
+                className={cn("h-[22px] w-[22px] transition-transform duration-200", active && "scale-105")}
+                strokeWidth={active ? 2.4 : 2}
+                aria-hidden
+              />
               <span className={cn("text-[10px] leading-none", active ? "font-semibold" : "font-medium")}>
                 {label}
               </span>
-              {active && (
-                <span
-                  aria-hidden
-                  className="h-[4px] w-[4px] rounded-full bg-[#00d86f]"
-                />
-              )}
             </Link>
           )
         })}

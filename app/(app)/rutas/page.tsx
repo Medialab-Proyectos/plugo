@@ -6,10 +6,13 @@ import {
   ArrowRight,
   BatteryCharging,
   Clock,
+  Gauge,
   MapPin,
+  Mountain,
   Navigation,
   Route as RouteIcon,
   Sparkles,
+  ThermometerSnowflake,
   Zap,
 } from "lucide-react"
 import { GlassCard } from "@/components/glass-card"
@@ -21,7 +24,6 @@ import { InlineAlert } from "@/components/inline-alert"
 import { chargers, popularRoutes } from "@/lib/mock-data"
 import { usePlugo } from "@/lib/plugo-context"
 import {
-  batteryUsedFor,
   estimatedMinutes,
   formatMinutes,
   googleMapsRouteUrl,
@@ -29,6 +31,7 @@ import {
   probabilityClasses,
   probabilityLevel,
 } from "@/lib/decision"
+import { estimateTrip, tripConditions, type TripEstimate } from "@/lib/autonomy"
 import { cn } from "@/lib/utils"
 
 type Plan = {
@@ -36,10 +39,12 @@ type Plan = {
   destination: string
   distanceKm: number
   durationMin: number
+  elevationM: number
   initialBattery: number | null
   arrivalBattery: number | null
   needsCharge: boolean
   recommendation: string
+  estimate: TripEstimate
   stops: { id: string; name: string; address: string; distanceKm: number; durationMin: number }[]
 }
 
@@ -56,17 +61,21 @@ export default function RutasPage() {
       // Buscamos una ruta popular conocida con ese destino, si no, usamos heurística
       const known = popularRoutes.find((r) => dest.toLowerCase().includes(r.to.toLowerCase()))
       const distanceKm = known?.distance ?? Math.max(20, Math.round(50 + Math.random() * 200))
-      const durationMin = known
-        ? parseInt(known.time) * 60 + (known.time.includes("m") ? parseInt(known.time.split("h")[1] || "0") : 0)
-        : estimatedMinutes(distanceKm)
+      // Relieve: usamos la elevación neta real de la ruta conocida; si no, heurística suave.
+      const elevationM = known?.elevation ?? Math.round((distanceKm % 7) * 30 - 200)
 
-      const usedPct = batteryUsedFor(distanceKm, state.vehicle)
+      const conditions = tripConditions(state.preferences)
+      const estimate = estimateTrip(state.vehicle, state.battery, {
+        distanceKm,
+        terrain: { netM: elevationM },
+        conditions,
+      })
+
       const initial = state.battery
-      const arrival = initial !== null ? Math.max(0, initial - usedPct) : null
+      const arrival = estimate.arrivalPct
+      const needsCharge = !estimate.canArrive
 
-      const needsCharge = arrival !== null ? arrival < 25 : usedPct > 70
-
-      // Sugerimos 1 parada solo si la batería en destino baja de 25%
+      // Sugerimos 1 parada solo si no se llega con confianza
       const onTheWay = chargers.filter((c) => c.distanceKm < distanceKm).slice(0, 1)
       const stops = needsCharge
         ? onTheWay.map((c) => ({
@@ -80,11 +89,11 @@ export default function RutasPage() {
 
       let recommendation: string
       if (arrival === null) {
-        recommendation = "Te recomendamos cargar antes de salir si no conoces tu nivel de batería."
+        recommendation = "Agrega tu nivel de batería para una estimación precisa."
       } else if (arrival < 15) {
         recommendation = "No llegas con confianza. Te sugerimos cargar antes de salir."
       } else if (arrival < 25) {
-        recommendation = "Te recomendamos cargar antes de regresar."
+        recommendation = "Llegas justo. Te recomendamos cargar antes de regresar."
       } else if (arrival < 50) {
         recommendation = "Llegas con tranquilidad. Considera cargar antes de tu próximo viaje."
       } else {
@@ -95,17 +104,17 @@ export default function RutasPage() {
         origin: org,
         destination: dest,
         distanceKm,
-        durationMin: known
-          ? estimatedMinutes(distanceKm) // mantenemos consistencia
-          : estimatedMinutes(distanceKm),
+        durationMin: estimatedMinutes(distanceKm),
+        elevationM,
         initialBattery: initial,
         arrivalBattery: arrival,
         needsCharge,
         recommendation,
+        estimate,
         stops,
       }
     },
-    [state.battery, state.vehicle],
+    [state.battery, state.vehicle, state.preferences],
   )
 
   // Auto cálculo cuando hay destino
@@ -123,10 +132,10 @@ export default function RutasPage() {
   return (
     <div className="space-y-5 px-5 pb-6 pt-5">
       <header>
-        <p className="text-[10px] font-semibold uppercase tracking-widest text-primary">Planificador</p>
-        <h1 className="mt-1 text-2xl font-semibold tracking-tight">Te ayudamos a llegar</h1>
+        <p className="text-[10px] font-semibold uppercase tracking-widest text-primary">Autonomía real</p>
+        <h1 className="mt-1 text-2xl font-semibold tracking-tight">¿Hasta dónde llegas?</h1>
         <p className="mt-1 text-xs text-foreground-muted">
-          Calcula tu viaje con paradas óptimas y sin sorpresas en el camino.
+          Calculamos tu autonomía según el relieve, el clima y tu forma de conducir — no solo la distancia.
         </p>
       </header>
 
@@ -210,9 +219,9 @@ export default function RutasPage() {
           {plan === null && destination.trim() === "" && (
             <GlassCard className="text-center">
               <Sparkles className="mx-auto h-6 w-6 text-primary" />
-              <p className="mt-2 text-sm font-semibold">Encuentra dónde cargar sin riesgo</p>
+              <p className="mt-2 text-sm font-semibold">Tu autonomía real, sin sorpresas</p>
               <p className="mt-1 text-xs text-foreground-muted">
-                Escribe tu destino y calculamos la mejor ruta según tu vehículo y batería.
+                Escribe tu destino y calculamos cuánta batería gastas según el relieve, el clima y tu vehículo.
               </p>
             </GlassCard>
           )}
@@ -275,7 +284,7 @@ function PlanResult({ plan }: { plan: Plan }) {
           <StatusBadge tone={arrivalTone}>{plan.needsCharge ? "Requiere parada" : "Viaje directo"}</StatusBadge>
         </div>
 
-        <div className="grid grid-cols-3 gap-2 rounded-2xl bg-white/[0.04] p-3">
+        <div className="grid grid-cols-3 gap-2 rounded-2xl bg-overlay-1 p-3">
           <Metric Icon={RouteIcon} label="Distancia" value={`${plan.distanceKm} km`} />
           <Metric Icon={Clock} label="Duración" value={formatMinutes(plan.durationMin)} />
           <Metric
@@ -287,6 +296,8 @@ function PlanResult({ plan }: { plan: Plan }) {
         </div>
 
         <p className="rounded-2xl bg-primary/10 px-3 py-2 text-xs text-primary">{arrivalText}. {plan.recommendation}</p>
+
+        <FactorBreakdown plan={plan} />
 
         <div className="grid grid-cols-[1fr_auto] gap-2">
           <Button asChild size="lg" className="w-full">
@@ -350,11 +361,52 @@ function PlanResult({ plan }: { plan: Plan }) {
         <InlineAlert
           kind="info"
           title="No encontramos paradas óptimas"
-          message="No hay cargadores confiables cerca de tu ruta. Te mostramos alternativas en el mapa."
+          message="No hay electrolineras confiables cerca de tu ruta. Te mostramos alternativas en el mapa."
           ctaLabel="Ver mapa"
           onCta={() => (window.location.href = "/mapa")}
         />
       ) : null}
+    </div>
+  )
+}
+
+function FactorBreakdown({ plan }: { plan: Plan }) {
+  const f = plan.estimate.factors
+  const rows = [
+    {
+      Icon: Mountain,
+      label: plan.elevationM >= 0 ? `Relieve · sube ${plan.elevationM} m` : `Relieve · baja ${Math.abs(plan.elevationM)} m`,
+      value: f.relieve,
+    },
+    { Icon: ThermometerSnowflake, label: "Clima (frío de la sabana)", value: f.clima },
+    { Icon: Gauge, label: "Velocidad de carretera", value: f.velocidad },
+  ].filter((r) => Math.abs(r.value) >= 1)
+
+  if (rows.length === 0) return null
+
+  return (
+    <div className="space-y-2 rounded-2xl border border-border/60 p-3">
+      <p className="text-[10px] font-semibold uppercase tracking-widest text-foreground-soft">
+        Por qué cambia tu autonomía
+      </p>
+      {rows.map(({ Icon, label, value }) => {
+        const saves = value < 0
+        return (
+          <div key={label} className="flex items-center justify-between gap-3">
+            <span className="flex items-center gap-2 text-xs text-foreground-muted">
+              <Icon className="h-3.5 w-3.5 shrink-0" />
+              {label}
+            </span>
+            <span className={cn("text-xs font-semibold tabular-nums", saves ? "text-success" : "text-warning")}>
+              {saves ? "" : "+"}
+              {value}% batería
+            </span>
+          </div>
+        )
+      })}
+      <p className="pt-1 text-[10px] leading-relaxed text-foreground-soft">
+        Subir consume más; bajar recupera energía con la regeneración.
+      </p>
     </div>
   )
 }

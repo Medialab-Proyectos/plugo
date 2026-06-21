@@ -108,6 +108,17 @@
 
   /* ---------- Ambient glow (home screen) ---------- */
   --glow-primary: rgba(0, 216, 111, 0.10);
+  --glow-a: rgba(0, 241, 199, 0.06);
+  --glow-b: rgba(46, 242, 162, 0.04);
+
+  /* ---------- Adaptive overlays (flip per theme) ----------
+     Use instead of bg-white/[…] so light mode works.
+     Dark → white-alpha (lift); Light → black-alpha (recess). */
+  --overlay-subtle: rgba(255, 255, 255, 0.03);
+  --overlay-1: rgba(255, 255, 255, 0.05);
+  --overlay-2: rgba(255, 255, 255, 0.09);
+  --overlay-hover: rgba(255, 255, 255, 0.06);
+  --overlay-line: rgba(255, 255, 255, 0.12);
 }
 
 /* =============================================================
@@ -168,6 +179,15 @@
   --input-border-focus: rgba(0, 216, 111, 0.55);
 
   --glow-primary: rgba(0, 216, 111, 0.06);
+  --glow-a: rgba(0, 184, 94, 0.07);
+  --glow-b: rgba(0, 184, 94, 0.04);
+
+  /* Adaptive overlays — black-alpha in light for proper recess/contrast */
+  --overlay-subtle: rgba(0, 0, 0, 0.03);
+  --overlay-1: rgba(0, 0, 0, 0.045);
+  --overlay-2: rgba(0, 0, 0, 0.07);
+  --overlay-hover: rgba(0, 0, 0, 0.05);
+  --overlay-line: rgba(0, 0, 0, 0.10);
 }
 
 @theme inline {
@@ -219,6 +239,14 @@
   --color-input-border: var(--input-border);
   --color-ring: var(--ring);
 
+  /* Adaptive overlays */
+  --color-overlay-subtle: var(--overlay-subtle);
+  --color-overlay-1: var(--overlay-1);
+  --color-overlay-2: var(--overlay-2);
+  --color-overlay-hover: var(--overlay-hover);
+  --color-overlay-line: var(--overlay-line);
+  --color-surface-inverse: var(--surface-inverse);
+
   /* Charts */
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
@@ -265,9 +293,10 @@
 
   body {
     background:
-      radial-gradient(1200px 600px at 80% -10%, rgba(0, 241, 199, 0.06), transparent 60%),
-      radial-gradient(800px 500px at -10% 110%, rgba(46, 242, 162, 0.04), transparent 60%),
+      radial-gradient(1200px 600px at 80% -10%, var(--glow-a), transparent 60%),
+      radial-gradient(800px 500px at -10% 110%, var(--glow-b), transparent 60%),
       var(--background);
+    background-attachment: fixed;
     min-height: 100dvh;
     /* Account for iOS safe areas */
     padding-bottom: env(safe-area-inset-bottom);
@@ -290,14 +319,14 @@
 @layer components {
   /* ---------- Surfaces / glass ---------- */
   .glass {
-    background: var(--surface-2);
+    background: var(--card);
     border: 1px solid var(--card-border);
     backdrop-filter: blur(18px) saturate(140%);
     -webkit-backdrop-filter: blur(18px) saturate(140%);
   }
 
   .glass-strong {
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.04));
+    background: linear-gradient(180deg, var(--surface-3), var(--surface-2)), var(--surface-overlay);
     border: 1px solid var(--card-border);
     backdrop-filter: blur(22px) saturate(150%);
     -webkit-backdrop-filter: blur(22px) saturate(150%);
@@ -449,6 +478,23 @@
   animation: fade-in 0.5s var(--ease-out-expo) both;
 }
 
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-new(root) {
+  animation: theme-circle-reveal 620ms var(--ease-out-expo) both;
+  clip-path: circle(0 at var(--theme-x, 50%) var(--theme-y, 50%));
+}
+
+@keyframes theme-circle-reveal {
+  to {
+    clip-path: circle(var(--theme-radius, 140vmax) at var(--theme-x, 50%) var(--theme-y, 50%));
+  }
+}
+
 /* Press effect helper */
 @keyframes press {
   0% { transform: scale(1); }
@@ -476,5 +522,38 @@
 .cta-pulse {
   animation: cta-glow 2.5s ease-in-out infinite;
   animation-delay: 1s;
+}
+
+/* ─── Animated bottom-nav active indicator ─── */
+.nav-indicator {
+  transition:
+    transform var(--duration-base) var(--ease-spring),
+    width var(--duration-base) var(--ease-spring);
+}
+
+/* ============================
+   Accessibility: reduced motion
+   ============================ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .home-card,
+  .animate-slide-up,
+  .animate-fade-in {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .animate-plugo-pulse,
+  .animate-plugo-glow,
+  .cta-pulse {
+    animation: none !important;
+  }
 }
 

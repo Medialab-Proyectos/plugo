@@ -68,7 +68,7 @@ export function BatteryModal({
                   "flex-1 rounded-2xl border px-3 py-2 text-sm transition",
                   value === c
                     ? "border-primary/60 bg-primary/10 text-primary"
-                    : "border-border bg-card text-foreground hover:bg-white/5",
+                    : "border-border bg-card text-foreground hover:bg-overlay-hover",
                 )}
               >
                 {c}%

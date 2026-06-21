@@ -5,52 +5,32 @@ import Link from "next/link"
 import {
   BatteryCharging,
   Bell,
-  BriefcaseBusiness,
-  ChevronDown,
+  CalendarClock,
+  CarFront,
+  CheckCircle2,
   ChevronRight,
-  Clock3,
-  Flame,
-  MapPin,
+  CircleHelp,
+  FileBadge2,
+  FolderOpen,
+  MapPinned,
+  Mountain,
   Navigation,
-  PencilLine,
   Route,
-  ShieldCheck,
   Sparkles,
-  Star,
-  Tag,
-  TrendingDown,
+  TriangleAlert,
+  Wrench,
   Zap,
 } from "lucide-react"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { BatteryModal } from "@/components/battery-modal"
-import { chargers, formatCOP } from "@/lib/mock-data"
-import { batteryAtArrival, chargerProbability, compatibility, estimatedMinutes, rankChargers } from "@/lib/decision"
+import { PlugoLogo } from "@/components/plugo-logo"
+import { ThemeToggle } from "@/components/theme-toggle"
+import { chargers, documentTemplates } from "@/lib/mock-data"
+import { compatibility, rankChargers } from "@/lib/decision"
 import { usePlugo, type Vehicle } from "@/lib/plugo-context"
+import { cn } from "@/lib/utils"
 
-const accent = "#00b85c"
-const softGreen = "#00b85c"
-
-/* ─── Contextual greeting by time of day ─── */
-function getGreeting(): { text: string; emoji: string } {
-  const h = new Date().getHours()
-  if (h < 6) return { text: "Buenas noches", emoji: "🌙" }
-  if (h < 12) return { text: "Buenos días", emoji: "☀️" }
-  if (h < 18) return { text: "Buenas tardes", emoji: "🌤️" }
-  return { text: "Buenas noches", emoji: "🌙" }
-}
-
-/* ─── Battery color by level ─── */
-function batteryColor(level: number): string {
-  if (level > 35) return "#00b85c"
-  if (level > 15) return "#d9a000"
-  return "#e05055"
-}
-
-function batteryLabel(level: number): { text: string; color: string } {
-  if (level > 35) return { text: "Todo bajo control", color: "#369C34" }
-  if (level > 15) return { text: "Podrías necesitar cargar pronto", color: "#ffb000" }
-  return { text: "Te recomendamos cargar ya", color: "#ff5a5f" }
-}
+const headerGradient = "linear-gradient(10deg, #003833 0%, #00bea0 100%)"
+const garageGradient = "radial-gradient(circle at 50% 18%, rgba(146,255,231,0.34), transparent 34%), radial-gradient(circle at 82% 72%, rgba(255,204,0,0.16), transparent 30%), linear-gradient(145deg, #001f1c 0%, #00584d 58%, #00bea0 100%)"
 
 export default function InicioPage() {
   const { state } = usePlugo()
@@ -60,38 +40,32 @@ export default function InicioPage() {
     () => chargers.filter((charger) => compatibility(charger, state.vehicle).compatible),
     [state.vehicle],
   )
-  const ranked = React.useMemo(
-    () => rankChargers(compatibleChargers, state.vehicle),
-    [compatibleChargers, state.vehicle],
-  )
-  const rankedChargers = React.useMemo(() => {
-    const list = []
-    if (ranked.primary) list.push(ranked.primary)
-    if (ranked.fallback) list.push(ranked.fallback)
-    list.push(...ranked.rest)
-    return list.slice(0, 5)
-  }, [ranked])
+  const ranked = React.useMemo(() => rankChargers(compatibleChargers, state.vehicle), [compatibleChargers, state.vehicle])
+  const nearest = ranked.primary ?? ranked.fallback ?? ranked.rest[0]
+  const pendingDocs = documentTemplates.filter((doc) => doc.status === "por-vencer" || doc.status === "vencido" || doc.status === "no-cargado")
 
   return (
     <>
-      <main className="relative flex flex-1 flex-col bg-background px-5 pt-8 pb-6 font-sans text-foreground">
+      <main className="flex h-full min-h-0 flex-col overflow-hidden bg-background text-foreground">
+        <CorporateHeader />
 
-        <div className="relative z-10 mx-auto flex w-full max-w-[430px] flex-1 flex-col gap-5">
-          <HomeHeader />
+        <div className="mx-auto flex min-h-0 w-full max-w-[393px] flex-1 flex-col justify-center gap-2 px-4 py-2">
+          {state.vehicle ? (
+            <VehicleCommandCenter
+              vehicle={state.vehicle}
+              vehicles={state.vehicles}
+              activeIndex={state.activeVehicleIndex}
+              battery={state.battery ?? 0}
+              pendingDocs={pendingDocs.length}
+              nearest={nearest}
+              onBatteryClick={() => setBatteryOpen(true)}
+            />
+          ) : (
+            <EmptyStateCard />
+          )}
 
-          <div className="flex min-h-0 flex-1 flex-col gap-5">
-            {state.vehicles.length > 0 ? (
-              <VehicleCarousel onUpdateBattery={() => setBatteryOpen(true)} />
-            ) : (
-              <EmptyVehicleCard />
-            )}
-            {rankedChargers.length > 0 ? (
-              <ChargerCarousel chargers={rankedChargers} />
-            ) : (
-              <NoChargerCard />
-            )}
-            <QuickAccess />
-          </div>
+          <EcosystemBrief nearest={nearest} pendingDocs={pendingDocs.length} />
+          <ActionDock nearest={nearest} />
         </div>
       </main>
       <BatteryModal open={batteryOpen} onOpenChange={setBatteryOpen} />
@@ -99,435 +73,233 @@ export default function InicioPage() {
   )
 }
 
-/* ─── Header ─── */
-function HomeHeader() {
-  const { state } = usePlugo()
-  const firstName = (state.userName || "Camilo").split(" ")[0]
-  const greeting = getGreeting()
-
+function CorporateHeader() {
   return (
-    <header className="flex shrink-0 items-start justify-between gap-1">
-      <div className="min-w-0 flex-1">
-        <h1 className="whitespace-nowrap text-[clamp(22px,6vw,28px)] font-semibold leading-none tracking-tight">
-          Hola, <span style={{ color: accent }}>{firstName}</span>
-        </h1>
-        <button type="button" className="mt-1.5 flex items-center gap-1 text-[clamp(11px,3.2vw,14px)] font-normal text-white/80">
-          <MapPin className="h-3 w-3 shrink-0" style={{ color: accent }} />
-          <span>Bogotá, Colombia</span>
-          <ChevronDown className="h-3 w-3 shrink-0 text-white/60" />
-        </button>
-      </div>
+    <header className="shrink-0 rounded-b-2xl px-5 pb-2 pt-2 text-white" style={{ background: headerGradient }}>
+      <div className="mx-auto flex w-full max-w-[393px] flex-col gap-2">
+        <div className="flex h-5 items-center justify-between text-[16px] font-semibold">
+          <span>9:41</span>
+          <span className="text-[11px] tracking-wide">5G  Wi-Fi  100%</span>
+        </div>
 
-      <div className="flex shrink-0 items-center gap-1">
-        {/* PlugoCoins + Streak combined badge */}
-        <Link
-          href="/perfil/recompensas"
-          className="flex h-[30px] items-center gap-1 rounded-full border border-white/12 bg-[#040C0F] px-1.5 backdrop-blur-xl"
-        >
-          <span className="flex h-4 w-4 items-center justify-center rounded-full bg-[#d4b01a] text-black">
-            <Zap className="h-2.5 w-2.5 fill-black" />
-          </span>
-          <span className="text-[11px] font-semibold tabular-nums">{state.plugoCoins.toLocaleString("es-CO")}</span>
-          {state.streakDays > 0 && (
-            <span className="flex items-center gap-0.5 border-l border-white/15 pl-1">
-              <Flame className="h-3 w-3 text-[#d45a2c]" />
-              <span className="text-[10px] font-semibold text-[#d45a2c]">{state.streakDays}</span>
-            </span>
-          )}
-        </Link>
-
-        <button
-          type="button"
-          aria-label="Notificaciones"
-          className="relative flex h-[32px] w-[32px] items-center justify-center rounded-full border border-white/12 bg-white/[0.02] backdrop-blur-xl"
-        >
-          <Bell className="h-4 w-4 text-white/90" />
-          <span className="absolute -right-0.5 -top-0.5 flex h-[14px] w-[14px] items-center justify-center rounded-full bg-[#e05055] text-[7px] font-semibold text-white">3</span>
-        </button>
+        <div className="flex min-h-[44px] items-center justify-between">
+          <PlugoLogo className="[&>span]:text-white [&>div]:h-8 [&>div]:w-8 [&>div]:rounded-lg [&>div]:shadow-none" size="lg" />
+          <div className="flex items-center gap-2">
+            <ThemeToggle className="bg-white/10 text-white hover:bg-white/15" />
+            <button aria-label="Ayuda" className="grid h-10 w-10 place-items-center rounded-full text-white/95 active:bg-white/10">
+              <CircleHelp className="h-5 w-5" />
+            </button>
+            <button aria-label="Notificaciones" className="grid h-10 w-10 place-items-center rounded-full text-white/95 active:bg-white/10">
+              <Bell className="h-5 w-5" />
+            </button>
+          </div>
+        </div>
       </div>
     </header>
   )
 }
 
-/* ─── Swipe hook shared by both carousels ─── */
-function useSwipe(count: number, initial = 0) {
-  const [index, setIndex] = React.useState(initial)
-  const [offsetX, setOffsetX] = React.useState(0)
-  const [swiping, setSwiping] = React.useState(false)
-  const startX = React.useRef(0)
-
-  const onTouchStart = (e: React.TouchEvent) => {
-    startX.current = e.touches[0].clientX
-    setSwiping(true)
-  }
-  const onTouchMove = (e: React.TouchEvent) => {
-    if (!swiping) return
-    setOffsetX(e.touches[0].clientX - startX.current)
-  }
-  const onTouchEnd = () => {
-    setSwiping(false)
-    const threshold = 50
-    if (offsetX < -threshold && index < count - 1) setIndex(index + 1)
-    else if (offsetX > threshold && index > 0) setIndex(index - 1)
-    setOffsetX(0)
-  }
-
-  return { index, setIndex, offsetX: swiping ? offsetX : 0, handlers: { onTouchStart, onTouchMove, onTouchEnd } }
-}
-
-/* ─── Vehicle Carousel ─── */
-function VehicleCarousel({ onUpdateBattery }: { onUpdateBattery: () => void }) {
-  const { state, dispatch } = usePlugo()
-  const { index, offsetX, handlers } = useSwipe(state.vehicles.length, state.activeVehicleIndex)
-
-  React.useEffect(() => {
-    dispatch({ type: "SET_ACTIVE_VEHICLE", index })
-  }, [index, dispatch])
+function VehicleCommandCenter({
+  vehicle,
+  vehicles,
+  activeIndex,
+  battery,
+  pendingDocs,
+  nearest,
+  onBatteryClick,
+}: {
+  vehicle: Vehicle
+  vehicles: Vehicle[]
+  activeIndex: number
+  battery: number
+  pendingDocs: number
+  nearest?: (typeof chargers)[number]
+  onBatteryClick: () => void
+}) {
+  const routeConfidence = Math.min(99, Math.max(82, battery + 45 - pendingDocs * 4))
+  const nextAction = battery < 55 ? "Carga antes de salir" : "Ruta lista para salir"
 
   return (
-    <div className="overflow-hidden" {...handlers}>
+    <section className="relative shrink-0 overflow-hidden rounded-[22px] p-3 text-white shadow-[0_24px_58px_-34px_rgba(0,56,51,0.9)]" style={{ background: garageGradient }}>
+      <style>{`
+        @keyframes plugoAurora {
+          0%, 100% { transform: translate3d(-8%, 4%, 0) scale(1); opacity: .54; }
+          50% { transform: translate3d(8%, -7%, 0) scale(1.08); opacity: .9; }
+        }
+        @keyframes plugoBreath {
+          0%, 100% { transform: scale(.94); opacity: .34; }
+          50% { transform: scale(1.08); opacity: .68; }
+        }
+        @keyframes plugoChargeWave {
+          0% { transform: translateX(-34%) translateY(8px) rotate(-4deg); opacity: .12; }
+          45% { opacity: .42; }
+          100% { transform: translateX(34%) translateY(-8px) rotate(4deg); opacity: .16; }
+        }
+      `}</style>
+      <div className="absolute inset-0 opacity-20 [background-image:linear-gradient(rgba(255,255,255,0.12)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.08)_1px,transparent_1px)] [background-size:28px_28px]" />
+      <div className="absolute -left-16 top-8 h-52 w-52 rounded-full bg-[#92ffe7]/35 blur-3xl" style={{ animation: "plugoAurora 6s ease-in-out infinite" }} />
+      <div className="absolute -right-12 bottom-5 h-48 w-48 rounded-full bg-[#ffcc00]/20 blur-3xl" style={{ animation: "plugoAurora 7.5s ease-in-out infinite reverse" }} />
+      <div className="absolute left-1/2 top-[41%] h-36 w-72 -translate-x-1/2 rounded-full bg-white/10 blur-2xl" style={{ animation: "plugoBreath 3.8s ease-in-out infinite" }} />
       <div
-        className="flex transition-transform duration-300 ease-out"
-        style={{ transform: `translateX(calc(-${index * 100}% + ${offsetX}px))` }}
-      >
-        {state.vehicles.map((v, i) => (
-          <div key={v.id} className="w-full shrink-0">
-            <VehicleCard
-              vehicle={v}
-              index={i}
-              total={state.vehicles.length}
-              onUpdateBattery={onUpdateBattery}
-            />
-          </div>
-        ))}
-      </div>
-    </div>
-  )
-}
+        className="absolute left-[-28%] top-[44%] h-20 w-[156%] rounded-[100%] bg-[linear-gradient(90deg,transparent,rgba(146,255,231,0.38),rgba(0,122,255,0.2),transparent)] blur-xl"
+        style={{ animation: "plugoChargeWave 4.8s ease-in-out infinite alternate" }}
+      />
 
-/* ─── Charger Carousel ─── */
-function ChargerCarousel({ chargers: list }: { chargers: (typeof chargers)[number][] }) {
-  const { index, offsetX, handlers } = useSwipe(list.length)
-
-  return (
-    <div className="overflow-hidden" {...handlers}>
-      <div
-        className="flex transition-transform duration-300 ease-out"
-        style={{ transform: `translateX(calc(-${index * 100}% + ${offsetX}px))` }}
-      >
-        {list.map((c, i) => (
-          <div key={c.id} className="w-full shrink-0">
-            <ChargingCard charger={c} index={i} total={list.length} />
-          </div>
-        ))}
-      </div>
-    </div>
-  )
-}
-
-/* ─── Vehicle Card with dynamic battery states ─── */
-function VehicleCard({ vehicle, index, total, onUpdateBattery }: { vehicle: Vehicle; index: number; total: number; onUpdateBattery: () => void }) {
-  const { state } = usePlugo()
-  const battery = state.battery ?? 42
-  const bColor = batteryColor(battery)
-  const bLabel = batteryLabel(battery)
-  const isLow = battery <= 25
-
-  return (
-    <section
-      className="home-card relative overflow-hidden rounded-[20px] border border-white/[0.07] bg-[#040C0F]"
-      style={{ padding: "clamp(10px, 1.6vh, 16px) 14px" }}
-    >
-      <div className="relative z-10">
-        {/* Title row */}
-        <div className="flex items-start justify-between gap-3">
-          <h2 className="text-[clamp(17px,4.8vw,21px)] font-semibold leading-tight">{vehicle.name || `${vehicle.brand} ${vehicle.model}`}</h2>
-          {total > 1 && (
-            <span className="rounded-full border border-white/12 bg-[#040C0F] px-2 py-0.5 text-[12px] font-normal text-white/70">
-              {index + 1} / {total}
-            </span>
-          )}
+      <div className="relative z-10 flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="flex items-center gap-1 text-xs font-semibold text-[#92ffe7]">
+            <Sparkles className="h-3.5 w-3.5 fill-current" />
+            Plugo conoce tu {vehicle.brand}
+          </p>
+          <h1 className="mt-1 text-[28px] font-black leading-8">Viaja sin ansiedad</h1>
         </div>
+        <RouteTrustBadge value={routeConfidence} />
+      </div>
 
-        {/* Dynamic status based on battery */}
-        <p className="mt-1 flex items-center gap-1.5 text-[12px] font-medium leading-none" style={{ color: bLabel.color }}>
-          {isLow ? <TrendingDown className="h-3.5 w-3.5" /> : <ShieldCheck className="h-3.5 w-3.5 fill-current/25" />}
-          {bLabel.text}
-        </p>
+      <div className="relative z-10 h-[116px]">
+        <div className="absolute left-0 top-4 rounded-full bg-black/18 px-2.5 py-1 text-[10px] font-bold text-[#92ffe7] backdrop-blur">{nextAction}</div>
+        <div className="absolute bottom-2 left-7 right-7 h-10 rounded-full bg-black/30 blur-xl" />
+        <img
+          src={vehicle.photo || "/vehicle-byd-seagull-side-dark.jpg"}
+          alt={vehicle.name}
+          className="absolute bottom-0 left-1/2 h-[116px] w-[304px] -translate-x-1/2 object-contain drop-shadow-[0_22px_18px_rgba(0,0,0,0.36)]"
+        />
+      </div>
 
-        {/* Content area with car image */}
-        <div className="relative" style={{ minHeight: "clamp(75px, 12vh, 110px)" }}>
-          <Link href="/documentos" className="mt-1.5 inline-flex items-center gap-1 text-[12px] font-normal text-white/80">
-            SOAT vence en <span className="font-medium text-[#d9a000]">3 meses</span>
-            <ChevronRight className="h-3.5 w-3.5 text-white/50" />
-          </Link>
-
-          <div className="mt-2 flex items-center gap-2">
-            <BatteryIcon level={battery} color={bColor} />
-            <div>
-              <p className="text-[clamp(24px,6.5vw,32px)] font-semibold leading-none tabular-nums text-white">
-                {battery}%
-              </p>
-              <p className="mt-0.5 text-[11px] font-normal text-white/70">Batería actual</p>
-            </div>
-          </div>
-
-          {vehicle.photo && (
-            <img
-              src={vehicle.photo}
-              alt={vehicle.name}
-              className="absolute -right-3 top-0 object-contain object-center"
-              style={{ height: "clamp(70px, 11vh, 105px)", width: "clamp(140px, 40vw, 200px)" }}
-            />
-          )}
-        </div>
-
-        {/* Update battery */}
+      <div className="relative z-10 grid grid-cols-2 gap-2">
+        <MiniSignal icon={<Mountain className="h-4 w-4" />} title="Relieve calculado" detail="Bogota y pendientes" />
         <button
           type="button"
-          onClick={onUpdateBattery}
-          className="flex h-[34px] w-full items-center justify-center gap-2 rounded-full border bg-transparent text-[12px] font-medium transition active:scale-[0.98]"
-          style={{ borderColor: bColor, color: bColor }}
+          onClick={onBatteryClick}
+          className="flex min-h-[54px] items-center gap-2 rounded-xl bg-white/12 px-2.5 text-left backdrop-blur active:scale-[0.98]"
         >
-          Actualizar batería
-          <PencilLine className="h-3.5 w-3.5" />
+          <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-white/12 text-[#92ffe7]">
+            <BatteryCharging className="h-4 w-4" />
+          </span>
+          <span className="min-w-0">
+            <span className="block truncate text-[11px] font-black leading-3">{nearest ? `${nearest.distanceKm.toFixed(1)} km a carga` : "Mapa listo"}</span>
+            <span className="mt-0.5 block truncate text-[10px] leading-3 text-white/62">{battery}% bateria</span>
+          </span>
         </button>
-
-        {/* Pagination dots */}
-        {total > 1 && (
-          <div className="mt-1.5 flex justify-center gap-2">
-            {Array.from({ length: total }, (_, i) => (
-              <span
-                key={i}
-                className="h-[6px] w-[6px] rounded-full"
-                style={{ backgroundColor: i === index ? accent : "rgba(255,255,255,0.3)" }}
-              />
-            ))}
-          </div>
-        )}
       </div>
-    </section>
-  )
-}
 
-function EmptyVehicleCard() {
-  return (
-    <section className="home-card rounded-[20px] border border-white/[0.07] bg-[#040C0F] p-4 text-center">
-      <BatteryCharging className="mx-auto h-7 w-7 text-primary" />
-      <h2 className="mt-2 text-base font-semibold">Registra tu vehículo</h2>
-      <p className="mt-1 text-sm font-normal text-white/55">Configura tu batería y conector.</p>
-      <Link href="/vehiculo/nuevo" className="mt-3 flex h-10 items-center justify-center rounded-full bg-primary text-sm font-medium text-primary-foreground">
-        Registrar vehículo
-      </Link>
-    </section>
-  )
-}
-
-/* ─── Charger Card with social proof and benefit-oriented CTA ─── */
-function ChargingCard({ charger, index = 0, total = 1 }: { charger: (typeof chargers)[number]; index?: number; total?: number }) {
-  const { state } = usePlugo()
-  const probability = chargerProbability(charger)
-  const minutes = estimatedMinutes(charger.distanceKm)
-  const currentBattery = state.battery ?? 42
-  const arrival = batteryAtArrival(charger.distanceKm, currentBattery, state.vehicle)
-
-  return (
-    <section
-      className="home-card relative overflow-hidden rounded-[20px] border border-white/[0.07] bg-[#040C0F]"
-      style={{ padding: "clamp(8px, 1.2vh, 14px) 12px" }}
-    >
-      <div className="relative z-10">
-        {/* Best option badge */}
-        {index === 0 && (
-          <div className="inline-flex items-center gap-1 rounded-full bg-[#369C34]/10 px-2 py-0.5 text-[10px] font-medium text-[#369C34]">
-            <Sparkles className="h-2.5 w-2.5 fill-current" />
-            Mejor opción para ti
-          </div>
-        )}
-
-        {/* Charger info row */}
-        <div className="mt-1.5 grid grid-cols-[48px_minmax(0,1fr)_62px] items-center gap-2">
-          <img
-            src="/Dominio/SofIma/terpel-voltex-logo.png"
-            alt="Terpel Voltex"
-            className="h-[46px] w-[46px] rounded-full object-cover"
-          />
-          <div className="min-w-0">
-            <h2 className="text-[clamp(15px,4.2vw,19px)] font-semibold leading-tight">{shortChargerName(charger.name)}</h2>
-            <p className="mt-0.5 flex items-center gap-1 text-[11px] font-normal text-white/65">
-              <MapPin className="h-3 w-3 shrink-0 text-white/50" />
-              <span className="truncate">{charger.address}, {charger.city}</span>
-            </p>
-            {/* Social proof: rating + reviews */}
-            <div className="mt-1 flex items-center gap-2">
-              <p className="flex items-center gap-0.5 text-[11px] font-medium text-primary">
-                <ShieldCheck className="h-3 w-3 fill-primary/25" />
-                Alta disponibilidad
-              </p>
-              <span className="flex items-center gap-0.5 text-[10px] text-white/50">
-                <Star className="h-2.5 w-2.5 fill-[#d4b01a] text-[#d4b01a]" />
-                {charger.rating} ({charger.reviews})
-              </span>
-            </div>
-          </div>
-          <ProgressRing value={probability} />
-        </div>
-
-        {/* Metrics — compact 3-col grid */}
-        <div className="mt-2 grid grid-cols-3 overflow-hidden rounded-[12px] border border-white/[0.07] bg-white/[0.02]">
-          <div className="flex flex-col items-center justify-center border-r border-white/[0.07] px-1 py-2">
-            <span className="flex items-center gap-1 text-[12px]">
-              <Clock3 className="h-3 w-3 text-[#8a30d9]" />
-              <span className="font-semibold text-white">A {minutes} min</span>
-            </span>
-            <span className="text-[10px] font-normal text-white/50">({charger.distanceKm.toFixed(1)} km)</span>
-          </div>
-          <div className="flex flex-col items-center justify-center border-r border-white/[0.07] px-1 py-2">
-            <span className="flex items-center gap-1 text-[12px]">
-              <BatteryCharging className="h-3 w-3 text-primary" />
-              <span className="font-semibold text-white">~{arrival}%</span>
-            </span>
-            <span className="text-[10px] font-normal text-white/50">de batería</span>
-          </div>
-          <div className="flex flex-col items-center justify-center px-1 py-2">
-            <span className="flex items-center gap-1 text-[12px]">
-              <Tag className="h-3 w-3 text-[#1a75d8]" />
-              <span className="font-semibold text-white">{formatCOP(charger.pricePerKwh).replace("COP", "").trim()}</span>
-            </span>
-            <span className="text-[10px] font-normal text-white/50">/ kWh</span>
-          </div>
-        </div>
-
-        {/* CTA */}
+      <div className="relative z-10 mt-3 grid grid-cols-2 gap-2">
+        <Link href="/rutas" className="flex h-11 items-center justify-center gap-2 rounded-xl bg-white px-3 text-sm font-black text-[#003833] active:scale-[0.98]">
+          <Route className="h-4 w-4" />
+          Ruta confiable
+        </Link>
         <Link
-          href={`/cargador/${charger.id}`}
-          className="cta-pulse mt-2 flex h-[38px] items-center justify-center gap-2 rounded-full bg-[#00944a] text-[14px] font-semibold uppercase tracking-wide text-[#F1F1F1] transition active:scale-[0.97]"
+          href="/mapa"
+          className="flex h-11 items-center justify-center gap-2 rounded-xl border border-white/18 bg-white/12 px-3 text-sm font-black text-white active:scale-[0.98]"
+          aria-label="Buscar electrolineras"
         >
-          <Navigation className="h-4 w-4 fill-white" />
-          Ir a cargar
+          <MapPinned className="h-5 w-5 text-[#92ffe7]" />
+          Electrolineras
         </Link>
-
-        {/* Pagination dots */}
-        {total > 1 && (
-          <div className="mt-1.5 flex justify-center gap-2">
-            {Array.from({ length: total }, (_, i) => (
-              <span
-                key={i}
-                className="h-[6px] w-[6px] rounded-full"
-                style={{ backgroundColor: i === index ? accent : "rgba(255,255,255,0.3)" }}
-              />
-            ))}
-          </div>
-        )}
       </div>
+
+      {vehicles.length > 1 && (
+        <div className="relative z-10 mt-3 flex gap-1.5">
+          {vehicles.map((item, index) => (
+            <span key={item.id} className={cn("h-1.5 rounded-full", index === activeIndex ? "w-6 bg-[#92ffe7]" : "w-2 bg-white/30")} />
+          ))}
+        </div>
+      )}
     </section>
   )
 }
 
-function NoChargerCard() {
+function RouteTrustBadge({ value }: { value: number }) {
   return (
-    <section className="home-card rounded-[20px] border border-white/[0.07] bg-[#040C0F] p-4 text-center">
-      <MapPin className="mx-auto h-7 w-7 text-primary" />
-      <h2 className="mt-2 text-base font-semibold">Busca cargadores cerca</h2>
-      <p className="mt-1 text-sm font-normal text-white/55">No encontramos una recomendación compatible.</p>
-      <Link href="/mapa" className="mt-3 flex h-10 items-center justify-center rounded-full bg-primary font-medium text-primary-foreground">
-        Ver mapa
+    <div className="shrink-0 rounded-2xl border border-white/18 bg-white/12 px-3 py-2 text-right backdrop-blur">
+      <p className="text-lg font-black leading-none text-[#92ffe7]">{value}%</p>
+      <p className="mt-0.5 text-[9px] font-semibold uppercase leading-none tracking-wide text-white/68">confiable</p>
+    </div>
+  )
+}
+
+function MiniSignal({ icon, title, detail }: { icon: React.ReactNode; title: string; detail: string }) {
+  return (
+    <div className="flex min-h-[54px] items-center gap-2 rounded-xl bg-white/12 px-2.5 backdrop-blur">
+      <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-white/12 text-[#92ffe7]">{icon}</span>
+      <div className="min-w-0">
+        <p className="truncate text-[11px] font-black leading-3">{title}</p>
+        <p className="mt-0.5 truncate text-[10px] leading-3 text-white/62">{detail}</p>
+      </div>
+    </div>
+  )
+}
+
+function EcosystemBrief({ nearest, pendingDocs }: { nearest?: (typeof chargers)[number]; pendingDocs: number }) {
+  const hasPending = pendingDocs > 0
+
+  return (
+    <section className="grid shrink-0 grid-cols-3 gap-2">
+      <Link href="/rutas" className="rounded-2xl border border-border bg-card p-2.5 text-card-foreground shadow-[0_10px_28px_-26px_rgba(0,0,0,0.5)] active:scale-[0.99]">
+        <span className="grid h-9 w-9 place-items-center rounded-xl bg-[#e6fbf7] text-[#007f6d]">
+          <Route className="h-4 w-4" />
+        </span>
+        <p className="mt-2 text-[11px] font-black leading-3">Trayecto</p>
+        <p className="mt-0.5 text-[9px] leading-3 text-foreground-muted">ultra confiable</p>
+      </Link>
+
+      <Link href={nearest ? `/cargador/${nearest.id}` : "/mapa"} className="rounded-2xl border border-border bg-card p-2.5 text-card-foreground shadow-[0_10px_28px_-26px_rgba(0,0,0,0.5)] active:scale-[0.99]">
+        <span className="grid h-9 w-9 place-items-center rounded-xl bg-[#e8f1ff] text-[#007aff]">
+          <Navigation className="h-4 w-4" />
+        </span>
+        <p className="mt-2 text-[11px] font-black leading-3">Electrolinera</p>
+        <p className="mt-0.5 text-[9px] leading-3 text-foreground-muted">{nearest ? `${nearest.distanceKm.toFixed(1)} km` : "mapa vivo"}</p>
+      </Link>
+
+      <Link href="/documentos" className="rounded-2xl border border-border bg-card p-2.5 text-card-foreground shadow-[0_10px_28px_-26px_rgba(0,0,0,0.5)] active:scale-[0.99]">
+        <span className={cn("grid h-9 w-9 place-items-center rounded-xl", hasPending ? "bg-[#fff4d8] text-[#a67502]" : "bg-[#e9fbf2] text-[#18631d]")}>
+          {hasPending ? <TriangleAlert className="h-4 w-4" /> : <CheckCircle2 className="h-4 w-4" />}
+        </span>
+        <p className="mt-2 text-[11px] font-black leading-3">Guantera</p>
+        <p className="mt-0.5 text-[9px] leading-3 text-foreground-muted">{hasPending ? "pendiente" : "transito"}</p>
       </Link>
     </section>
   )
 }
 
-/* ─── Quick Access ─── */
-function QuickAccess() {
+function ActionDock({ nearest }: { nearest?: (typeof chargers)[number] }) {
+  const items = [
+    { href: "/rutas", label: "Programar ruta", icon: Route, bg: "#00c7be1a", fg: "#00a59e" },
+    { href: nearest ? `/cargador/${nearest.id}` : "/mapa", label: "Electrolineras", icon: BatteryCharging, bg: "#007aff1a", fg: "#007aff" },
+    { href: "/documentos", label: "Guantera", icon: FolderOpen, bg: "#ff2d551a", fg: "#ff2d55" },
+    { href: "/servicios", label: "Servicios", icon: Wrench, bg: "#007aff1a", fg: "#007aff" },
+    { href: "/mi-vehiculo", label: "Mi vehiculo", icon: CarFront, bg: "#5856d61a", fg: "#5856d6" },
+    { href: "/perfil/recompensas", label: "Beneficios", icon: CalendarClock, bg: "#ffcc001a", fg: "#b58900" },
+  ]
+
   return (
-    <section className="mt-auto shrink-0">
-      <div className="mb-1.5 flex items-center justify-between">
-        <h2 className="text-[14px] font-semibold">Accesos rápidos</h2>
-        <Link href="/servicios" className="text-[13px] font-normal text-primary">
-          Ver todo
+    <section className="shrink-0 space-y-2 overflow-hidden" aria-labelledby="ecosystem-title">
+      <div className="flex items-center justify-between">
+        <p id="ecosystem-title" className="text-xs leading-none text-foreground-muted">
+          Ecosistema de cuidado
+        </p>
+        <Link href="/mi-vehiculo" className="flex items-center gap-0.5 text-xs font-semibold text-[#007f6d]">
+          Ver salud <ChevronRight className="h-3 w-3" />
         </Link>
       </div>
-      <div className="grid grid-cols-4 gap-1.5">
-        <QuickTile href="/mapa" icon={<MapPin className="h-5 w-5" />} label="Ver cargadores" tone="green" />
-        <QuickTile href="/rutas" icon={<Route className="h-5 w-5" />} label="Planear ruta" tone="blue" />
-        <QuickTile href="/servicios" icon={<BriefcaseBusiness className="h-5 w-5" />} label="Servicios" tone="amber" />
-        <QuickTile href="/historial" icon={<Zap className="h-5 w-5 fill-current" />} label="Historial de cargas" tone="green" />
+      <div className="grid grid-cols-3 gap-x-3 gap-y-2">
+        {items.map(({ href, label, icon: Icon, bg, fg }) => (
+          <Link key={href} href={href} className="flex h-[64px] flex-col items-center justify-center gap-1 rounded-2xl bg-card p-1 text-center text-card-foreground shadow-[0_10px_28px_-26px_rgba(0,0,0,0.55)] active:scale-[0.97]">
+            <span className="grid h-8 w-8 place-items-center rounded-xl" style={{ backgroundColor: bg, color: fg }}>
+              <Icon className="h-5 w-5" strokeWidth={1.9} />
+            </span>
+            <span className="text-[11px] leading-3">{label}</span>
+          </Link>
+        ))}
       </div>
     </section>
   )
 }
 
-function QuickTile({ href, icon, label, tone }: { href: string; icon: React.ReactNode; label: string; tone: "green" | "blue" | "amber" }) {
-  const toneClass = {
-    green: "border-white/[0.07] text-[#00c49e]",
-    blue: "border-[#151d30] text-[#1a8cd8]",
-    amber: "border-[#251e10] text-[#d9a000]",
-  }[tone]
-
+function EmptyStateCard() {
   return (
-    <Link
-      href={href}
-      className={`flex flex-col items-center justify-center gap-0.5 rounded-[14px] border bg-[#040C0F] px-1 text-center transition active:scale-[0.97] ${toneClass}`}
-      style={{ height: "clamp(62px, 9vh, 76px)" }}
-    >
-      {icon}
-      <span className="text-[10px] font-normal leading-tight text-white/90">{label}</span>
+    <Link href="/vehiculo/nuevo" className="flex h-[360px] items-center justify-center rounded-2xl border border-dashed border-[#cddbd6] bg-white text-sm font-semibold text-[#007f6d]">
+      Registrar vehiculo
     </Link>
   )
-}
-
-/* ─── Sub-components ─── */
-function Metric({ icon, label, prefix, sub, tone }: { icon?: React.ReactNode; label: string; prefix?: string; sub: string; tone: "purple" | "green" | "blue" }) {
-  const color = tone === "purple" ? "#a33cff" : tone === "green" ? "#00d86f" : "#2588ff"
-
-  return (
-    <div className="border-r border-white/8 px-1 py-1.5 text-center last:border-r-0" style={{ minHeight: "clamp(52px, 8vh, 65px)" }}>
-      {icon && <div className="mx-auto mb-0.5 flex justify-center" style={{ color }}>{icon}</div>}
-      {prefix && <p className="text-[9px] font-normal leading-tight text-white/75">{prefix}</p>}
-      <p className="text-[12px] font-semibold leading-tight text-white" style={!icon ? { color } : undefined}>{label}</p>
-      <p className="mt-0.5 text-[9px] font-normal leading-tight text-white/70">{sub}</p>
-    </div>
-  )
-}
-
-function ProgressRing({ value }: { value: number }) {
-  return (
-    <div
-      className="grid place-items-center rounded-full"
-      style={{
-        height: "clamp(58px, 8.5vh, 74px)",
-        width: "clamp(58px, 8.5vh, 74px)",
-        background: `conic-gradient(#00944a ${value * 3.6}deg, rgba(0,148,74,0.12) 0deg)`,
-      }}
-    >
-      <div
-        className="grid place-items-center rounded-full bg-[#040C0F] text-center leading-none"
-        style={{ height: "clamp(50px, 7.5vh, 66px)", width: "clamp(50px, 7.5vh, 66px)" }}
-      >
-        <div>
-          <span className="block text-[clamp(15px,2.4vh,19px)] font-semibold leading-none">{value}%</span>
-          <span className="block text-[8px] font-normal leading-none text-white/60" style={{ marginTop: "3px" }}>disponible</span>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-function BatteryIcon({ level, color }: { level: number; color: string }) {
-  return (
-    <div className="relative h-[32px] w-[20px] rounded-[5px] border-[1.5px] border-white/20 bg-black/25 p-0.5">
-      <span className="absolute -top-1.5 left-1/2 h-1.5 w-3 -translate-x-1/2 rounded-t-sm bg-white/20" />
-      <span
-        className="absolute bottom-[2px] left-[2px] right-[2px] rounded-sm"
-        style={{
-          height: `${Math.max(10, Math.min(level, 100))}%`,
-          background: `linear-gradient(to top, ${color}, ${color}cc)`,
-        }}
-      />
-    </div>
-  )
-}
-
-function shortChargerName(name: string) {
-  return name.replace(" Calle 100", "")
 }

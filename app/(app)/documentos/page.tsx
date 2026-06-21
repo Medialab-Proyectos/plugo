@@ -227,7 +227,7 @@ function DocumentRow({ doc }: { doc: (typeof documentTemplates)[number] }) {
           doc.status === "vigente" && "bg-success/15 text-success",
           doc.status === "por-vencer" && "bg-warning/15 text-warning",
           doc.status === "vencido" && "bg-destructive/15 text-destructive",
-          doc.status === "no-cargado" && "bg-white/5 text-foreground-muted",
+          doc.status === "no-cargado" && "bg-overlay-1 text-foreground-muted",
         )}
       >
         <Icon className="h-5 w-5" />

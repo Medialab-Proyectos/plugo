@@ -40,11 +40,11 @@ const buttonVariants = cva(
         tonal:
           'bg-primary/15 text-primary ring-1 ring-inset ring-primary/20 hover:bg-primary/20',
         secondary:
-          'bg-white text-[#0b0f14] hover:bg-white/95 shadow-[0_4px_16px_-8px_rgba(255,255,255,0.25)]',
+          'bg-surface-inverse text-background hover:opacity-95 shadow-[0_4px_16px_-8px_rgba(0,0,0,0.25)]',
         outline:
-          'bg-transparent text-foreground ring-1 ring-inset ring-border-strong hover:bg-white/[0.04] hover:ring-foreground-muted/40',
+          'bg-transparent text-foreground ring-1 ring-inset ring-border-strong hover:bg-overlay-1 hover:ring-foreground-muted/40',
         ghost:
-          'bg-transparent text-foreground hover:bg-white/[0.06]',
+          'bg-transparent text-foreground hover:bg-overlay-hover',
         destructive:
           'bg-destructive text-destructive-foreground shadow-[0_8px_24px_-12px_rgba(255,90,95,0.55)] hover:bg-destructive/90',
         link:

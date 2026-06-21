@@ -23,7 +23,7 @@ export function Stepper({
             key={i}
             className={cn(
               "h-1.5 flex-1 rounded-full transition-all",
-              i < current ? "bg-primary" : "bg-white/10",
+              i < current ? "bg-primary" : "bg-overlay-2",
             )}
           />
         ))}

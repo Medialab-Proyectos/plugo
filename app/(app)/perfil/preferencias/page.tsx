@@ -43,7 +43,7 @@ export default function PreferenciasPage() {
       </header>
 
       <Section title="Carga inteligente" Icon={Battery}>
-        <Field label="Prioridad de carga" description="Qué prioriza la app cuando te recomienda cargadores.">
+        <Field label="Prioridad de carga" description="Qué prioriza la app cuando te recomienda electrolineras.">
           <SegmentControl
             value={preferences.chargingPriority}
             onChange={setChargingPriority}
@@ -57,7 +57,7 @@ export default function PreferenciasPage() {
       </Section>
 
       <Section title="Búsqueda en mapa" Icon={Zap}>
-        <Field label="Cómo ordenamos los cargadores" description="Decide qué aparece primero en tus búsquedas.">
+        <Field label="Cómo ordenamos las electrolineras" description="Decide qué aparece primero en tus búsquedas.">
           <SegmentControl
             value={preferences.mapPriority}
             onChange={setMapPriority}
@@ -73,7 +73,7 @@ export default function PreferenciasPage() {
 
       <Section title="Notificaciones" Icon={Bell}>
         <Toggle
-          label="Cargadores cercanos"
+          label="Electrolineras cercanas"
           description="Te avisamos cuando hay un punto disponible en tu zona."
           checked={preferences.notifications.chargers}
           onCheckedChange={(v) => setNotif("chargers", v)}
@@ -189,7 +189,7 @@ function SegmentControl<T extends string>({
   options: { value: T; label: string }[]
 }) {
   return (
-    <div className="flex w-full gap-1 rounded-2xl bg-white/[0.04] p-1">
+    <div className="flex w-full gap-1 rounded-2xl bg-overlay-1 p-1">
       {options.map((o) => (
         <button
           key={o.value}

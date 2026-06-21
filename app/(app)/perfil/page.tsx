@@ -113,7 +113,7 @@ export default function PerfilPage() {
             <Home className="h-6 w-6" />
           </div>
           <div className="flex-1">
-            <p className="text-sm font-semibold">Comparte tu cargador</p>
+            <p className="text-sm font-semibold">Comparte tu electrolinera</p>
             <p className="mt-0.5 text-xs text-foreground-muted">
               Recibe ingresos rentando tu wallbox a la comunidad.
             </p>
@@ -176,7 +176,7 @@ export default function PerfilPage() {
                 key={item.label}
                 href={item.href}
                 className={cn(
-                  "flex items-center gap-3 px-4 py-3.5 transition hover:bg-white/[0.03]",
+                  "flex items-center gap-3 px-4 py-3.5 transition hover:bg-overlay-hover",
                   i !== section.items.length - 1 && "border-b border-border/60",
                 )}
               >

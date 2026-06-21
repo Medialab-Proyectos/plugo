@@ -105,7 +105,7 @@ export default function MapaPage() {
           <Input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Buscar cargador, dirección…"
+            placeholder="Buscar electrolinera, dirección…"
             aria-label="Buscar"
             className="h-10 flex-1 border-0 bg-transparent px-0 shadow-none focus-visible:ring-0 focus-visible:border-0"
           />
@@ -114,7 +114,7 @@ export default function MapaPage() {
               type="button"
               onClick={() => setSearch("")}
               aria-label="Limpiar búsqueda"
-              className="flex h-8 w-8 items-center justify-center rounded-full text-foreground-muted hover:bg-white/10 active:scale-95 transition"
+              className="flex h-8 w-8 items-center justify-center rounded-full text-foreground-muted hover:bg-overlay-hover active:scale-95 transition"
             >
               <X className="h-4 w-4" />
             </button>
@@ -143,7 +143,7 @@ export default function MapaPage() {
                   "h-9 shrink-0 rounded-full px-3.5 text-xs font-medium transition active:scale-95",
                   active
                     ? "bg-primary text-primary-foreground shadow-[0_4px_12px_-4px_rgba(0,241,199,0.5)]"
-                    : "bg-[var(--surface-2)] text-foreground ring-1 ring-inset ring-[var(--card-border)] backdrop-blur-md hover:bg-white/10",
+                    : "bg-[var(--surface-2)] text-foreground ring-1 ring-inset ring-[var(--card-border)] backdrop-blur-md hover:bg-overlay-hover",
                 )}
                 aria-pressed={active}
               >
@@ -158,7 +158,7 @@ export default function MapaPage() {
       <DraggableSheet sheet={sheet} setSheet={setSheet} className={sheetHeight}>
         <div className="flex items-center justify-between px-5 pb-3">
           <div>
-            <p className="text-sm font-semibold">{ranked.length} cargadores cerca</p>
+            <p className="text-sm font-semibold">{ranked.length} electrolineras cerca</p>
             <p className="text-xs text-foreground-muted">
               {state.vehicle ? "Ordenados por confiabilidad" : "Ordenados por relevancia"}
             </p>
@@ -175,7 +175,7 @@ export default function MapaPage() {
           <div className="space-y-3 overflow-y-auto px-4 pb-32 no-scrollbar h-[calc(100%-90px)]">
             {ranked.length === 0 ? (
               <p className="rounded-3xl border border-border bg-card p-6 text-center text-sm text-foreground-muted">
-                No encontramos cargadores cerca. Puedes ampliar el rango de búsqueda.
+                No encontramos electrolineras cerca. Puedes ampliar el rango de búsqueda.
               </p>
             ) : (
               ranked.slice(0, sheet === "expanded" ? ranked.length : 4).map((c) => (
@@ -295,14 +295,14 @@ function SelectedChargerCard({ charger }: { charger: Charger }) {
           )}
 
           <div className="mt-2 flex flex-wrap items-center gap-1.5">
-            <span className="inline-flex items-center gap-1 rounded-full bg-white/5 px-2 py-0.5 text-[10px] text-foreground-muted">
+            <span className="inline-flex items-center gap-1 rounded-full bg-overlay-1 px-2 py-0.5 text-[10px] text-foreground-muted">
               <Zap className="h-3 w-3" />
               {charger.power} kW
             </span>
-            <span className="inline-flex items-center rounded-full bg-white/5 px-2 py-0.5 text-[10px] text-foreground-muted">
+            <span className="inline-flex items-center rounded-full bg-overlay-1 px-2 py-0.5 text-[10px] text-foreground-muted">
               {charger.connectors.join(" · ")}
             </span>
-            <span className="inline-flex items-center rounded-full bg-white/5 px-2 py-0.5 text-[10px] font-medium text-foreground">
+            <span className="inline-flex items-center rounded-full bg-overlay-1 px-2 py-0.5 text-[10px] font-medium text-foreground">
               {formatCOP(charger.pricePerKwh)}/kWh
             </span>
           </div>

@@ -76,7 +76,7 @@ export default function RecompensasPage() {
               {Math.max(0, next.points - points)} pts para {next.label}
             </span>
           </div>
-          <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-white/[0.06]">
+          <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-overlay-2">
             <div
               className="h-full rounded-full bg-gradient-to-r from-primary to-success transition-all duration-500"
               style={{ width: `${progress}%` }}
@@ -143,7 +143,7 @@ export default function RecompensasPage() {
               <div
                 className={cn(
                   "flex h-8 w-8 shrink-0 items-center justify-center rounded-full",
-                  h.type === "earn" ? "bg-success/10 text-success" : "bg-white/5 text-foreground-muted",
+                  h.type === "earn" ? "bg-success/10 text-success" : "bg-overlay-1 text-foreground-muted",
                 )}
               >
                 <TrendingUp className={cn("h-4 w-4", h.type === "spend" && "rotate-180")} />

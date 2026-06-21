@@ -193,7 +193,7 @@ export default function VehicleWizardPage() {
             <Button
               onClick={handleContinue}
               disabled={!canContinue}
-              className="h-14 w-full rounded-2xl bg-primary text-base font-semibold text-primary-foreground hover:bg-primary/90 disabled:bg-white/5 disabled:text-foreground-soft"
+              className="h-14 w-full rounded-2xl bg-primary text-base font-semibold text-primary-foreground hover:bg-primary/90 disabled:bg-overlay-1 disabled:text-foreground-soft"
             >
               {step === 4 ? "Guardar vehículo" : "Continuar"}
               <ArrowRight className="ml-1 h-5 w-5" />
@@ -245,7 +245,7 @@ function Step1({
               "flex min-h-[120px] flex-col items-start justify-between rounded-3xl border p-4 text-left transition-all",
               type === id
                 ? "border-primary/60 bg-primary/10 ring-2 ring-primary/40"
-                : "border-border bg-card hover:bg-white/5",
+                : "border-border bg-card hover:bg-overlay-hover",
             )}
             aria-pressed={type === id}
           >
@@ -317,7 +317,7 @@ function Step2({
                     "rounded-2xl border px-4 py-2 text-sm transition",
                     brand === b.brand
                       ? "border-primary/60 bg-primary/10 text-primary"
-                      : "border-border bg-card text-foreground hover:bg-white/5",
+                      : "border-border bg-card text-foreground hover:bg-overlay-hover",
                   )}
                 >
                   {b.brand}
@@ -339,7 +339,7 @@ function Step2({
                       "rounded-2xl border px-4 py-2 text-sm transition",
                       model === m
                         ? "border-primary/60 bg-primary/10 text-primary"
-                        : "border-border bg-card text-foreground hover:bg-white/5",
+                        : "border-border bg-card text-foreground hover:bg-overlay-hover",
                     )}
                   >
                     {m}
@@ -362,7 +362,7 @@ function Step2({
                       "rounded-2xl border px-4 py-2 text-sm transition",
                       year === y
                         ? "border-primary/60 bg-primary/10 text-primary"
-                        : "border-border bg-card text-foreground hover:bg-white/5",
+                        : "border-border bg-card text-foreground hover:bg-overlay-hover",
                     )}
                   >
                     {y}
@@ -451,7 +451,7 @@ function Step3({
 }) {
   return (
     <>
-      <StepHeading title="Selecciona el conector de tu vehículo" subtitle="Esto nos ayuda a mostrar más cargadores compatibles en el mapa." />
+      <StepHeading title="Selecciona el conector de tu vehículo" subtitle="Esto nos ayuda a mostrar más electrolineras compatibles en el mapa." />
       <div className="space-y-2">
         {connectors.map((c) => {
           const isRecommended = recommended === c.id
@@ -463,7 +463,7 @@ function Step3({
               onClick={() => onConnector(c.id)}
               className={cn(
                 "flex w-full items-start gap-3 rounded-3xl border p-4 text-left transition",
-                selected ? "border-primary/60 bg-primary/10" : "border-border bg-card hover:bg-white/5",
+                selected ? "border-primary/60 bg-primary/10" : "border-border bg-card hover:bg-overlay-hover",
               )}
               aria-pressed={selected}
             >
@@ -494,7 +494,7 @@ function Step3({
       {connector === "no-seguro" && (
         <GlassCard className="mt-4 animate-slide-up">
           <p className="text-sm text-foreground">
-            Te ayudaremos a encontrar cargadores compatibles según tu vehículo.
+            Te ayudaremos a encontrar electrolineras compatibles según tu vehículo.
           </p>
         </GlassCard>
       )}
@@ -514,7 +514,7 @@ function Step3({
                 "flex-1 rounded-2xl border px-4 py-3 text-sm transition",
                 hasAdapter === o.v
                   ? "border-primary/60 bg-primary/10 text-primary"
-                  : "border-border bg-card text-foreground hover:bg-white/5",
+                  : "border-border bg-card text-foreground hover:bg-overlay-hover",
               )}
             >
               {o.label}
@@ -535,7 +535,7 @@ function Step3({
                   }
                   className={cn(
                     "flex w-full items-center gap-3 rounded-2xl border p-3 text-left transition",
-                    checked ? "border-primary/60 bg-primary/10" : "border-border bg-card hover:bg-white/5",
+                    checked ? "border-primary/60 bg-primary/10" : "border-border bg-card hover:bg-overlay-hover",
                   )}
                 >
                   <div
@@ -630,7 +630,7 @@ function Step4({
         <button
           type="button"
           onClick={() => setCameraOpen(true)}
-          className="flex w-full items-center gap-3 rounded-2xl border border-dashed border-border bg-card/50 p-4 text-left text-sm text-foreground-muted hover:bg-white/5"
+          className="flex w-full items-center gap-3 rounded-2xl border border-dashed border-border bg-card/50 p-4 text-left text-sm text-foreground-muted hover:bg-overlay-hover"
         >
           <Camera className="h-5 w-5" />
           {photo ? "Cambiar foto del vehículo" : "Tomar foto de mi vehículo"}
@@ -659,7 +659,7 @@ function Step4({
               <Button
                 variant="outline"
                 onClick={() => setCameraOpen(false)}
-                className="h-12 rounded-2xl border-border bg-card hover:bg-white/5"
+                className="h-12 rounded-2xl border-border bg-card hover:bg-overlay-hover"
               >
                 Cancelar
               </Button>
