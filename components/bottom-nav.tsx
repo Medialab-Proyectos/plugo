@@ -23,7 +23,7 @@ export function BottomNav() {
   return (
     <nav
       aria-label="Navegación principal"
-      className="fixed bottom-0 left-1/2 z-40 w-full max-w-[393px] -translate-x-1/2 px-4 pb-[max(env(safe-area-inset-bottom),12px)]"
+      className="fixed bottom-0 left-1/2 z-40 w-full max-w-[480px] -translate-x-1/2 px-4 pb-[max(env(safe-area-inset-bottom),12px)]"
     >
       <div className="glass-strong relative grid grid-cols-5 rounded-full shadow-[0_12px_40px_-16px_rgba(0,0,0,0.5)]">
         {/* Indicador activo deslizante (spring) */}

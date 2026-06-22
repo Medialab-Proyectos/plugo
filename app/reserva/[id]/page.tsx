@@ -9,6 +9,7 @@ import { PhoneFrame } from "@/components/phone-frame"
 import { GlassCard } from "@/components/glass-card"
 import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
+import { Confetti } from "@/components/confetti"
 import { chargers, formatCOP } from "@/lib/mock-data"
 import { usePlugo } from "@/lib/plugo-context"
 import { cn } from "@/lib/utils"
@@ -74,9 +75,10 @@ export default function ReservaPage() {
   if (step === "success") {
     return (
       <PhoneFrame noBottomPad>
-        <div className="flex min-h-dvh flex-col px-6 pb-8 pt-10">
+        <div className="relative flex min-h-dvh flex-col px-6 pb-8 pt-10">
+          <Confetti />
           <div className="flex flex-1 flex-col items-center justify-center text-center">
-            <div className="relative mb-6">
+            <div className="relative mb-6 animate-pop-in">
               <div className="absolute inset-0 -m-6 rounded-full bg-success/20 blur-2xl" />
               <div className="relative flex h-24 w-24 items-center justify-center rounded-full bg-success text-[#00150F] glow-primary animate-plugo-glow">
                 <Check className="h-12 w-12" strokeWidth={3} />

@@ -13,6 +13,7 @@ import {
   Route as RouteIcon,
   Sparkles,
   ThermometerSnowflake,
+  TriangleAlert,
   Zap,
 } from "lucide-react"
 import { GlassCard } from "@/components/glass-card"
@@ -44,6 +45,7 @@ type Plan = {
   arrivalBattery: number | null
   needsCharge: boolean
   recommendation: string
+  chargersOnWay: number
   estimate: TripEstimate
   stops: { id: string; name: string; address: string; distanceKm: number; durationMin: number }[]
 }
@@ -74,6 +76,11 @@ export default function RutasPage() {
       const initial = state.battery
       const arrival = estimate.arrivalPct
       const needsCharge = !estimate.canArrive
+
+      // Electrolineras útiles en el trayecto (operativas, dentro del rango)
+      const chargersOnWay = chargers.filter(
+        (c) => c.distanceKm <= distanceKm && c.status !== "fuera-de-servicio",
+      ).length
 
       // Sugerimos 1 parada solo si no se llega con confianza
       const onTheWay = chargers.filter((c) => c.distanceKm < distanceKm).slice(0, 1)
@@ -110,6 +117,7 @@ export default function RutasPage() {
         arrivalBattery: arrival,
         needsCharge,
         recommendation,
+        chargersOnWay,
         estimate,
         stops,
       }
@@ -274,6 +282,8 @@ function PlanResult({ plan }: { plan: Plan }) {
 
   return (
     <div className="space-y-3">
+      <CopilotRoute plan={plan} />
+
       {/* Resumen de viaje (sin km de autonomía, foco en batería al llegar) */}
       <GlassCard variant="strong" className="space-y-4">
         <div className="flex items-center justify-between">
@@ -366,6 +376,64 @@ function PlanResult({ plan }: { plan: Plan }) {
           onCta={() => (window.location.href = "/mapa")}
         />
       ) : null}
+    </div>
+  )
+}
+
+function CopilotRoute({ plan }: { plan: Plan }) {
+  const n = plan.chargersOnWay
+  const dest = plan.destination
+
+  let tone: "warn" | "ok" = "ok"
+  let Icon = Sparkles
+  let text: React.ReactNode
+
+  if (plan.needsCharge && n === 0) {
+    tone = "warn"
+    Icon = TriangleAlert
+    text = (
+      <>
+        No encuentro electrolineras confiables camino a <b className="font-semibold">{dest}</b>. Carga al 100% antes de
+        salir o considera otro medio para no quedarte a mitad de camino.
+      </>
+    )
+  } else if (plan.needsCharge && n > 0) {
+    tone = "warn"
+    Icon = TriangleAlert
+    text = (
+      <>
+        Llegas justo. Hay <b className="font-semibold">{n} electrolineras</b> camino a {dest}; planifica una parada.
+        Algunas pueden estar ocupadas, así que sal con margen.
+      </>
+    )
+  } else {
+    text = (
+      <>
+        Vas tranquilo{n > 0 ? <>: <b className="font-semibold">{n} electrolineras</b> en el camino a {dest} por si acaso</> : ""}. Si llegas
+        de noche, descansa cerca de una antes del último tramo.
+      </>
+    )
+  }
+
+  return (
+    <div
+      className={cn(
+        "flex items-start gap-3 rounded-3xl border p-4",
+        tone === "warn" ? "border-warning/30 bg-warning/5" : "border-primary/25 bg-primary/5",
+      )}
+    >
+      <div
+        className={cn(
+          "grid h-10 w-10 shrink-0 place-items-center rounded-2xl",
+          tone === "warn" ? "bg-warning/15 text-warning" : "bg-primary/15 text-primary",
+        )}
+      >
+        <Icon className="h-5 w-5" />
+      </div>
+      <div className="min-w-0 flex-1">
+        <p className="text-[10px] font-semibold uppercase tracking-widest text-foreground-soft">Copiloto Plugo</p>
+        <p className="mt-0.5 text-[13px] leading-snug text-foreground">{text}</p>
+      </div>
     </div>
   )
 }

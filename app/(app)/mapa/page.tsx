@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import Link from "next/link"
-import { Search, SlidersHorizontal, X, MapPin, Navigation, Plug, Zap } from "lucide-react"
+import { Search, SlidersHorizontal, X, MapPin, Navigation, Plug, Zap, Percent, BatteryWarning, ChevronRight } from "lucide-react"
 import { ChargerMap } from "@/components/charger-map"
 import { ChargerCard } from "@/components/charger-card"
 import { Input } from "@/components/ui/input"
@@ -99,6 +99,16 @@ export default function MapaPage() {
 
       {/* Top: search + filters */}
       <div className="absolute left-0 right-0 top-0 z-20 safe-pt px-4 pt-4">
+        {/* Barra de descuentos en electrolineras aliadas */}
+        <Link
+          href="/servicios"
+          className="mb-3 flex items-center gap-2 rounded-full bg-primary px-3.5 py-2 text-xs font-semibold text-primary-foreground shadow-[0_8px_24px_-12px_rgba(0,216,111,0.6)] active:scale-[0.98]"
+        >
+          <Percent className="h-4 w-4 shrink-0" />
+          <span className="flex-1">Hasta 45% de descuento en electrolineras aliadas</span>
+          <ChevronRight className="h-4 w-4 shrink-0" />
+        </Link>
+
         {/* Search composite — recessed input surface inside glass wrapper for elevation */}
         <div className="surface-input flex items-center gap-2 rounded-2xl pl-4 pr-2 py-2 backdrop-blur-xl">
           <Search className="h-5 w-5 shrink-0 text-foreground-muted" aria-hidden />
@@ -156,11 +166,26 @@ export default function MapaPage() {
 
       {/* Bottom sheet (always visible) */}
       <DraggableSheet sheet={sheet} setSheet={setSheet} className={sheetHeight}>
+        {(state.battery === null || state.battery <= 30) && (
+          <Link
+            href="/mi-vehiculo"
+            className="mx-4 mb-2 flex items-center gap-2 rounded-2xl border border-warning/30 bg-warning/10 px-3 py-2 active:scale-[0.99]"
+          >
+            <BatteryWarning className="h-4 w-4 shrink-0 text-warning" />
+            <span className="flex-1 text-xs text-foreground">
+              {state.battery === null
+                ? "¿Cuánta batería tienes? Actualízala para ver tu alcance real."
+                : `Batería al ${state.battery}%. Te conviene cargar pronto.`}
+            </span>
+            <ChevronRight className="h-4 w-4 shrink-0 text-warning" />
+          </Link>
+        )}
+
         <div className="flex items-center justify-between px-5 pb-3">
           <div>
             <p className="text-sm font-semibold">{ranked.length} electrolineras cerca</p>
             <p className="text-xs text-foreground-muted">
-              {state.vehicle ? "Ordenados por confiabilidad" : "Ordenados por relevancia"}
+              {state.vehicle ? "Ordenadas por confiabilidad" : "Ordenadas por relevancia"}
             </p>
           </div>
         </div>

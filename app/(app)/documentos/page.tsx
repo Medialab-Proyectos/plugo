@@ -6,12 +6,15 @@ import {
   CheckCircle2,
   ChevronRight,
   FileText,
-  Plus,
-  Shield,
-  Upload,
-  Wrench,
   IdCard,
   LifeBuoy,
+  Maximize2,
+  Plus,
+  Shield,
+  ShieldCheck,
+  Upload,
+  Wrench,
+  X,
 } from "lucide-react"
 import { GlassCard } from "@/components/glass-card"
 import { Button } from "@/components/ui/button"
@@ -27,8 +30,11 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { StatusBadge } from "@/components/status-badge"
 import { documentTemplates } from "@/lib/mock-data"
+import { usePlugo } from "@/lib/plugo-context"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
+
+type Doc = (typeof documentTemplates)[number]
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   soat: Shield,
@@ -38,10 +44,7 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   licencia: IdCard,
 }
 
-const statusMap: Record<
-  string,
-  { label: string; tone: "success" | "warning" | "danger" | "muted" }
-> = {
+const statusMap: Record<string, { label: string; tone: "success" | "warning" | "danger" | "muted" }> = {
   vigente: { label: "Vigente", tone: "success" },
   "por-vencer": { label: "Por vencer", tone: "warning" },
   vencido: { label: "Vencido", tone: "danger" },
@@ -52,12 +55,13 @@ function daysUntil(iso: string | null): number | null {
   if (!iso) return null
   const today = new Date()
   const target = new Date(iso)
-  const diff = Math.ceil((target.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
-  return diff
+  return Math.ceil((target.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
 }
 
 export default function DocumentosPage() {
   const [open, setOpen] = React.useState(false)
+  const [selected, setSelected] = React.useState<Doc | null>(null)
+  const [present, setPresent] = React.useState(false)
 
   const docs = documentTemplates
   const alerts = docs.filter((d) => d.status === "por-vencer" || d.status === "vencido" || d.status === "no-cargado")
@@ -67,9 +71,12 @@ export default function DocumentosPage() {
     <div className="space-y-5 px-5 pb-6 pt-5">
       <header className="flex items-start justify-between gap-3">
         <div>
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-primary">Garaje legal</p>
-          <h1 className="mt-1 text-2xl font-semibold tracking-tight">Documentos</h1>
-          <p className="mt-1 text-xs text-foreground-muted">Todo bajo control con alertas inteligentes.</p>
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-primary">Documentos del vehículo</p>
+          <h1 className="mt-1 flex items-center gap-1.5 text-2xl font-semibold tracking-tight">
+            <ShieldCheck className="h-6 w-6 text-primary" />
+            Bóveda
+          </h1>
+          <p className="mt-1 text-xs text-foreground-muted">Tus documentos seguros, listos para mostrar en segundos.</p>
         </div>
         <Button size="sm" className="rounded-2xl" onClick={() => setOpen(true)}>
           <Plus className="mr-1 h-4 w-4" />
@@ -112,7 +119,7 @@ export default function DocumentosPage() {
 
         <TabsContent value="todos" className="mt-4 space-y-3">
           {docs.map((d) => (
-            <DocumentRow key={d.id} doc={d} />
+            <DocumentRow key={d.id} doc={d} onOpen={() => setSelected(d)} />
           ))}
         </TabsContent>
 
@@ -120,7 +127,7 @@ export default function DocumentosPage() {
           {vigentes.length === 0 ? (
             <EmptyDocs message="Aún no tienes documentos vigentes." />
           ) : (
-            vigentes.map((d) => <DocumentRow key={d.id} doc={d} />)
+            vigentes.map((d) => <DocumentRow key={d.id} doc={d} onOpen={() => setSelected(d)} />)
           )}
         </TabsContent>
 
@@ -132,17 +139,32 @@ export default function DocumentosPage() {
               <p className="mt-1 text-xs text-foreground-muted">No hay documentos por vencer.</p>
             </GlassCard>
           ) : (
-            alerts.map((d) => <DocumentRow key={d.id} doc={d} />)
+            alerts.map((d) => <DocumentRow key={d.id} doc={d} onOpen={() => setSelected(d)} />)
           )}
         </TabsContent>
       </Tabs>
 
+      {/* Visor del documento (carné digital) */}
+      <Sheet open={!!selected} onOpenChange={(v) => !v && setSelected(null)}>
+        <SheetContent side="bottom" className="rounded-t-3xl border-border bg-popover">
+          {selected && (
+            <DocumentViewer doc={selected} onPresent={() => setPresent(true)} />
+          )}
+        </SheetContent>
+      </Sheet>
+
+      {/* Modo presentación a la autoridad (pantalla completa, alto contraste) */}
+      {selected && present && (
+        <PresentMode doc={selected} onClose={() => setPresent(false)} />
+      )}
+
+      {/* Subir documento */}
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetContent side="bottom" className="rounded-t-3xl border-border bg-popover">
           <SheetHeader className="text-left">
             <SheetTitle>Subir documento</SheetTitle>
             <SheetDescription className="text-foreground-muted">
-              Toma una foto o sube un PDF y lo asociamos a tu vehículo.
+              Toma una foto o sube un PDF y lo guardamos en tu Bóveda.
             </SheetDescription>
           </SheetHeader>
           <div className="mt-6 space-y-4">
@@ -150,10 +172,7 @@ export default function DocumentosPage() {
               <Label htmlFor="doc-type" className="text-xs uppercase tracking-widest text-foreground-soft">
                 Tipo de documento
               </Label>
-              <select
-                id="doc-type"
-                className="h-11 w-full rounded-2xl border border-border bg-input px-3 text-sm"
-              >
+              <select id="doc-type" className="h-11 w-full rounded-2xl border border-border bg-input px-3 text-sm">
                 <option>SOAT</option>
                 <option>Revisión técnico-mecánica</option>
                 <option>Seguro todo riesgo</option>
@@ -178,11 +197,11 @@ export default function DocumentosPage() {
             <Button
               onClick={() => {
                 setOpen(false)
-                toast.success("Documento guardado", { description: "Te avisaremos cuando esté por vencer." })
+                toast.success("Documento guardado en tu Bóveda", { description: "Te avisaremos cuando esté por vencer." })
               }}
               className="h-12 w-full rounded-2xl bg-primary text-primary-foreground"
             >
-              Guardar documento
+              Guardar en la Bóveda
             </Button>
           </div>
         </SheetContent>
@@ -200,7 +219,7 @@ function EmptyDocs({ message }: { message: string }) {
   )
 }
 
-function DocumentRow({ doc }: { doc: (typeof documentTemplates)[number] }) {
+function DocumentRow({ doc, onOpen }: { doc: Doc; onOpen: () => void }) {
   const Icon = iconMap[doc.id] || FileText
   const status = statusMap[doc.status]
   const days = daysUntil(doc.expiresAt)
@@ -216,6 +235,7 @@ function DocumentRow({ doc }: { doc: (typeof documentTemplates)[number] }) {
   return (
     <button
       type="button"
+      onClick={onOpen}
       className={cn(
         "flex w-full items-center gap-3 rounded-3xl border bg-card p-4 text-left transition active:scale-[0.99]",
         doc.status === "vencido" ? "border-destructive/30" : "border-border",
@@ -244,11 +264,127 @@ function DocumentRow({ doc }: { doc: (typeof documentTemplates)[number] }) {
   )
 }
 
+/* Carné digital dentro del visor */
+function DocumentViewer({ doc, onPresent }: { doc: Doc; onPresent: () => void }) {
+  const { state } = usePlugo()
+  const v = state.vehicle
+  const Icon = iconMap[doc.id] || FileText
+  const status = statusMap[doc.status]
+  const loaded = doc.status !== "no-cargado"
+
+  return (
+    <div className="space-y-4 pb-2">
+      <SheetHeader className="text-left">
+        <SheetTitle>{doc.name}</SheetTitle>
+        <SheetDescription className="text-foreground-muted">
+          {loaded ? "Listo para mostrar a una autoridad." : "Sube este documento para tenerlo a la mano."}
+        </SheetDescription>
+      </SheetHeader>
+
+      <DocCard doc={doc} plate={v?.plate} owner={state.userName} />
+
+      {loaded ? (
+        <Button onClick={onPresent} className="h-12 w-full rounded-2xl">
+          <Maximize2 className="mr-2 h-4 w-4" />
+          Presentar a la autoridad
+        </Button>
+      ) : (
+        <Button className="h-12 w-full rounded-2xl">
+          <Upload className="mr-2 h-4 w-4" />
+          Subir {doc.name}
+        </Button>
+      )}
+      <div className="flex items-center justify-center gap-1.5 text-[11px] text-foreground-soft">
+        <Icon className="h-3.5 w-3.5" />
+        Estado: <span className={cn(status.tone === "danger" && "text-destructive", status.tone === "warning" && "text-warning", status.tone === "success" && "text-success")}>{status.label}</span>
+      </div>
+    </div>
+  )
+}
+
+function DocCard({ doc, plate, owner }: { doc: Doc; plate?: string; owner?: string }) {
+  const days = daysUntil(doc.expiresAt)
+  const expired = doc.status === "vencido"
+  return (
+    <div
+      className="relative overflow-hidden rounded-3xl p-5 text-white shadow-[0_22px_50px_-28px_rgba(0,56,51,0.85)]"
+      style={{ background: "linear-gradient(150deg, #001f1c 0%, #00584d 60%, #00a589 100%)" }}
+    >
+      <div aria-hidden className="absolute -right-10 -top-10 h-36 w-36 rounded-full bg-[#92ffe7]/20 blur-3xl" />
+      <div className="relative flex items-start justify-between">
+        <div>
+          <p className="text-[10px] uppercase tracking-widest text-white/60">PLUGO · Bóveda</p>
+          <p className="mt-1 text-lg font-semibold">{doc.name}</p>
+        </div>
+        <span
+          className={cn(
+            "rounded-full px-2.5 py-1 text-[10px] font-bold",
+            expired ? "bg-destructive text-white" : "bg-[#92ffe7] text-[#003833]",
+          )}
+        >
+          {expired ? "VENCIDO" : "VÁLIDO"}
+        </span>
+      </div>
+
+      <div className="relative mt-6 grid grid-cols-2 gap-3 text-sm">
+        <Field label="Placa" value={plate || "—"} />
+        <Field label="Titular" value={owner || "Conductor"} />
+        <Field
+          label="Vigencia"
+          value={doc.expiresAt ? formatDate(doc.expiresAt) : "Sin cargar"}
+        />
+        <Field
+          label="Estado"
+          value={
+            days === null ? "—" : expired ? `Hace ${Math.abs(days)} d` : `Faltan ${days} d`
+          }
+        />
+      </div>
+    </div>
+  )
+}
+
+function Field({ label, value }: { label: string; value: string }) {
+  return (
+    <div>
+      <p className="text-[10px] uppercase tracking-widest text-white/55">{label}</p>
+      <p className="mt-0.5 font-semibold">{value}</p>
+    </div>
+  )
+}
+
+/* Pantalla completa, alto contraste, para mostrar a la autoridad */
+function PresentMode({ doc, onClose }: { doc: Doc; onClose: () => void }) {
+  const { state } = usePlugo()
+  return (
+    <div className="fixed inset-0 z-[60] flex flex-col bg-background p-5 animate-fade-in">
+      <div className="flex items-center justify-between">
+        <p className="text-[10px] font-semibold uppercase tracking-widest text-primary">Modo presentación</p>
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Cerrar"
+          className="grid h-10 w-10 place-items-center rounded-full bg-overlay-1 transition active:scale-90 hover:bg-overlay-hover"
+        >
+          <X className="h-5 w-5" />
+        </button>
+      </div>
+
+      <div className="flex flex-1 flex-col items-center justify-center gap-5">
+        <DocCard doc={doc} plate={state.vehicle?.plate} owner={state.userName} />
+        <p className="text-center text-sm text-foreground-muted">
+          Muestra esta pantalla a la autoridad.<br />Verificación oficial dentro de Plugo.
+        </p>
+      </div>
+
+      <p className="pb-2 text-center text-[10px] text-foreground-soft">Toca la X para volver a tu Bóveda</p>
+    </div>
+  )
+}
+
 function formatDate(iso: string): string {
   try {
-    return new Intl.DateTimeFormat("es-CO", { day: "2-digit", month: "short", year: "numeric" }).format(
-      new Date(iso),
-    )
+    return new Intl.DateTimeFormat("es-CO", { day: "2-digit", month: "short", year: "numeric" }).format(new Date(iso))
   } catch {
     return iso
   }
