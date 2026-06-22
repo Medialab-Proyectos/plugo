@@ -24,10 +24,10 @@ import {
   TriangleAlert,
   Wrench,
   X,
+  Zap,
 } from "lucide-react"
 import { BatteryModal } from "@/components/battery-modal"
 import { ThemeToggle } from "@/components/theme-toggle"
-import { CumbrevaLogo } from "@/components/cumbreva-logo"
 import { chargers, documentTemplates } from "@/lib/mock-data"
 import { compatibility, rankChargers } from "@/lib/decision"
 import { realRange, currentConditions } from "@/lib/autonomy"
@@ -92,20 +92,28 @@ export default function InicioPage() {
 
 function CorporateHeader() {
   return (
-    <header className="sticky top-0 z-30 bg-[#f2f5f7]/92 px-5 pb-3 pt-[max(env(safe-area-inset-top),1rem)] backdrop-blur-xl sm:px-6 lg:px-8">
+    <header className="sticky top-0 z-30 border-b border-[#dfe5eb] bg-[#f2f5f7]/95 px-5 pb-3 pt-[max(env(safe-area-inset-top),1rem)] backdrop-blur-xl sm:px-6 lg:px-8">
       <div className="mx-auto flex w-full max-w-[1120px] items-center justify-between gap-3">
-        <CumbrevaLogo size="md" className="[&_*]:tracking-normal" />
-        <div className="flex items-center gap-1.5">
+        <div className="flex min-w-0 items-center gap-3">
+          <div className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[#05c46b] text-[#061611] shadow-[0_14px_28px_-18px_rgba(5,196,107,0.95)]">
+            <Zap className="h-5 w-5 fill-current" strokeWidth={2.5} />
+          </div>
+          <div className="min-w-0">
+            <p className="truncate text-[24px] font-black leading-none text-[#0b1622]">CUMBREVA</p>
+            <p className="mt-1.5 truncate text-[10px] font-bold leading-none text-[#657384]">Tu copiloto electrico</p>
+          </div>
+        </div>
+        <div className="flex shrink-0 items-center gap-2">
           <ThemeToggle className="text-[#22313f]" />
           <button
             aria-label="Ayuda"
-            className="grid h-10 w-10 place-items-center rounded-full text-[#536170] active:bg-black/5"
+            className="grid h-9 w-9 place-items-center rounded-full text-[#536170] active:bg-black/5"
           >
             <CircleHelp className="h-5 w-5" />
           </button>
           <button
             aria-label="Notificaciones"
-            className="relative grid h-10 w-10 place-items-center rounded-full text-[#536170] active:bg-black/5"
+            className="relative grid h-9 w-9 place-items-center rounded-full text-[#536170] active:bg-black/5"
           >
             <Bell className="h-5 w-5" />
             <span className="absolute right-2.5 top-2.5 h-2 w-2 rounded-full bg-primary ring-2 ring-[#f2f5f7]" />
@@ -160,19 +168,19 @@ function SmartRouteHero({
         type="button"
         onClick={() => go(pos - 1)}
         aria-label="Vehiculo anterior"
-        className="absolute left-3 top-1/2 z-20 grid h-9 w-9 -translate-y-1/2 place-items-center rounded-full bg-black/35 text-white backdrop-blur-md transition active:scale-90"
+        className="absolute left-0 top-0 z-20 h-full w-16 text-transparent focus-visible:text-white focus-visible:outline-none"
       >
-        <ChevronLeft className="h-5 w-5" />
+        <ChevronLeft className="mx-auto h-5 w-5 opacity-0 focus-visible:opacity-100" />
       </button>
       <button
         type="button"
         onClick={() => go(pos + 1)}
         aria-label="Vehiculo siguiente"
-        className="absolute right-3 top-1/2 z-20 grid h-9 w-9 -translate-y-1/2 place-items-center rounded-full bg-black/35 text-white backdrop-blur-md transition active:scale-90"
+        className="absolute right-0 top-0 z-20 h-full w-16 text-transparent focus-visible:text-white focus-visible:outline-none"
       >
-        <ChevronRight className="h-5 w-5" />
+        <ChevronRight className="mx-auto h-5 w-5 opacity-0 focus-visible:opacity-100" />
       </button>
-      <div className="absolute bottom-3 left-1/2 z-20 flex -translate-x-1/2 items-center gap-1.5">
+      <div className="absolute bottom-3 left-1/2 z-20 flex -translate-x-1/2 items-center gap-1.5 opacity-0 focus-within:opacity-100">
         {Array.from({ length: slots }).map((_, i) => (
           <button
             key={i}
