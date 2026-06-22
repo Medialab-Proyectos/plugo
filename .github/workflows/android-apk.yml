@@ -10,7 +10,7 @@ jobs:
   build-apk:
     runs-on: ubuntu-latest
     env:
-      CAPACITOR_APP_URL: ${{ vars.CAPACITOR_APP_URL }}
+      CAPACITOR_APP_URL: ${{ vars.CAPACITOR_APP_URL || 'https://plugo-ten.vercel.app' }}
 
     steps:
       - name: Checkout
@@ -18,10 +18,7 @@ jobs:
 
       - name: Validate remote URL
         run: |
-          if [ -z "${CAPACITOR_APP_URL}" ]; then
-            echo "Define la variable del repositorio CAPACITOR_APP_URL con la URL web que quieres embeber."
-            exit 1
-          fi
+          echo "Building Android WebView for ${CAPACITOR_APP_URL}"
 
       - name: Setup Node
         uses: actions/setup-node@v4
