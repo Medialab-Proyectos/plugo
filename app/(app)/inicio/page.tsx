@@ -73,7 +73,6 @@ export default function InicioPage() {
                 onBatteryClick={() => setBatteryOpen(true)}
               />
               <div className="no-scrollbar flex min-h-0 min-w-0 flex-col gap-4 md:overflow-y-auto">
-                <RecommendationPush battery={state.battery ?? 0} pendingDocs={pendingDocs} />
                 <ActionDock nearest={nearest} docsAlert={pendingDocs.length > 0} />
                 <TrustMessage />
               </div>
@@ -92,28 +91,28 @@ export default function InicioPage() {
 
 function CorporateHeader() {
   return (
-    <header className="sticky top-0 z-30 border-b border-[#dfe5eb] bg-[#f2f5f7]/95 px-5 pb-3 pt-[max(env(safe-area-inset-top),1rem)] backdrop-blur-xl sm:px-6 lg:px-8">
-      <div className="mx-auto flex w-full max-w-[1120px] items-center justify-between gap-3">
-        <div className="flex min-w-0 items-center gap-3">
+    <header className="sticky top-0 z-30 border-b border-[#dfe5eb] bg-[#f2f5f7]/95 px-3 pb-3 pt-[max(env(safe-area-inset-top),1rem)] backdrop-blur-xl sm:px-6 lg:px-8">
+      <div className="mx-auto flex w-full max-w-[1120px] items-center justify-between gap-2">
+        <div className="flex min-w-0 items-center gap-2.5">
           <div className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[#05c46b] text-[#061611] shadow-[0_14px_28px_-18px_rgba(5,196,107,0.95)]">
             <Zap className="h-5 w-5 fill-current" strokeWidth={2.5} />
           </div>
-          <div className="min-w-0">
-            <p className="truncate text-[24px] font-black leading-none text-[#0b1622]">CUMBREVA</p>
+          <div className="min-w-max">
+            <p className="whitespace-nowrap text-[22px] font-black leading-none text-[#0b1622]">CUMBREVA</p>
             <p className="mt-1.5 truncate text-[10px] font-bold leading-none text-[#657384]">Tu copiloto electrico</p>
           </div>
         </div>
-        <div className="flex shrink-0 items-center gap-2">
-          <ThemeToggle className="text-[#22313f]" />
+        <div className="flex shrink-0 items-center gap-1">
+          <ThemeToggle className="h-8 w-8 text-[#22313f]" />
           <button
             aria-label="Ayuda"
-            className="grid h-9 w-9 place-items-center rounded-full text-[#536170] active:bg-black/5"
+            className="grid h-8 w-8 place-items-center rounded-full text-[#536170] active:bg-black/5"
           >
             <CircleHelp className="h-5 w-5" />
           </button>
           <button
             aria-label="Notificaciones"
-            className="relative grid h-9 w-9 place-items-center rounded-full text-[#536170] active:bg-black/5"
+            className="relative grid h-8 w-8 place-items-center rounded-full text-[#536170] active:bg-black/5"
           >
             <Bell className="h-5 w-5" />
             <span className="absolute right-2.5 top-2.5 h-2 w-2 rounded-full bg-primary ring-2 ring-[#f2f5f7]" />
@@ -341,14 +340,8 @@ function VehicleCardFace({
           disabled={running}
           aria-pressed={started}
           aria-label={started ? "Apagar vehiculo" : "Prender vehiculo"}
-          className={cn(
-            "absolute right-3 top-3 z-20 flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[11px] font-bold backdrop-blur-sm transition active:scale-95",
-            started ? "bg-primary text-primary-foreground" : "bg-black/35 text-white",
-          )}
-        >
-          <Power className="h-3.5 w-3.5" />
-          {started ? "Apagar" : "Prender"}
-        </button>
+          className="absolute right-0 top-0 z-20 h-16 w-16 opacity-0"
+        />
 
         {running && (
           <div className="absolute inset-x-0 bottom-0 z-30 bg-gradient-to-t from-black/80 via-black/55 to-transparent px-4 pb-3 pt-7">
@@ -372,7 +365,9 @@ function VehicleCardFace({
 
       <div className="flex flex-col gap-4 p-5 md:flex-[2] md:justify-center">
         <div className="flex items-center justify-between gap-3">
-          <h1 className="min-w-0 truncate text-lg font-black leading-tight text-[#0b1622]">{vehicle.name}</h1>
+          <h1 className="min-w-0 text-[18px] font-black leading-tight text-[#0b1622] [overflow-wrap:anywhere]">
+            {vehicle.name}
+          </h1>
           <span
             className={cn(
               "flex shrink-0 items-center gap-1 rounded-full px-3 py-1 text-[11px] font-bold",
