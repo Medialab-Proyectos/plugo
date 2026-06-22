@@ -573,7 +573,7 @@ export const badges = [
   { id: "explorador", name: "Explorador", earned: true, description: "Visitaste 5 estaciones distintas." },
   { id: "ruta-inteligente", name: "Ruta Inteligente", earned: true, description: "Planeaste tu primer viaje." },
   { id: "anfitrion-verificado", name: "Anfitrión Verificado", earned: false, description: "Publica tu cargador y recibe 5 sesiones." },
-  { id: "pionero-ev", name: "Pionero EV", earned: false, description: "1 año en Plugo con uso constante." },
+  { id: "pionero-ev", name: "Pionero EV", earned: false, description: "1 año en Cumbreva con uso constante." },
   { id: "cero-ansiedad", name: "Cero Ansiedad", earned: true, description: "10 viajes planeados con éxito." },
 ]
 

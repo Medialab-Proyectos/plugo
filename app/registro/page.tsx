@@ -9,13 +9,13 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { TextField } from "@/components/ui/text-field"
 import { PhoneFrame } from "@/components/phone-frame"
-import { PlugoLogo } from "@/components/plugo-logo"
+import { CumbrevaLogo } from "@/components/cumbreva-logo"
 import { Spinner } from "@/components/ui/spinner"
-import { usePlugo } from "@/lib/plugo-context"
+import { useCumbreva } from "@/lib/cumbreva-context"
 
 export default function RegisterPage() {
   const router = useRouter()
-  const { dispatch } = usePlugo()
+  const { dispatch } = useCumbreva()
   const [form, setForm] = React.useState({ name: "", email: "", password: "", confirm: "" })
   const [errors, setErrors] = React.useState<Record<string, string>>({})
   const [loading, setLoading] = React.useState(false)
@@ -54,7 +54,7 @@ export default function RegisterPage() {
         </button>
 
         <div className="mb-10 flex flex-col items-start gap-5">
-          <PlugoLogo />
+          <CumbrevaLogo />
           <div>
             <h1 className="text-display text-balance">Crea tu cuenta</h1>
             <p className="mt-2 text-sm text-foreground-muted">

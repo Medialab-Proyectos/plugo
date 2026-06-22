@@ -20,7 +20,7 @@ const ThemeContext = React.createContext<{
   useSystem: () => {},
 })
 
-const STORAGE_KEY = "plugo:theme"
+const STORAGE_KEY = "cumbreva:theme"
 
 function systemTheme(): Theme {
   if (typeof window === "undefined") return "light"

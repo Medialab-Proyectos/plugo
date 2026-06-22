@@ -5,7 +5,7 @@ import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
 
 /**
- * Button — PLUGO Design System v2
+ * Button — CUMBREVA Design System v2
  *
  * Shape language: pill (rounded-full) for primary CTAs and tonal/secondary,
  * rounded-2xl for utility/icon buttons. ALWAYS distinct from inputs (which use rounded-2xl with input surface).

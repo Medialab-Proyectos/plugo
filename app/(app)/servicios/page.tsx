@@ -58,7 +58,7 @@ export default function ServiciosPage() {
               <Sparkles className="h-5 w-5" />
             </div>
             <div className="flex-1">
-              <p className="text-sm font-semibold">Membresía PLUGO+</p>
+              <p className="text-sm font-semibold">Membresía CUMBREVA+</p>
               <p className="mt-1 text-xs text-foreground-muted">
                 Hasta 30% de descuento en servicios y reservas prioritarias.
               </p>

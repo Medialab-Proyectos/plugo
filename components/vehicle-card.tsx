@@ -5,11 +5,11 @@ import { BatteryCharging, ChevronRight } from "lucide-react"
 import { GlassCard } from "@/components/glass-card"
 import { StatusBadge } from "@/components/status-badge"
 import { BatteryModal } from "@/components/battery-modal"
-import { usePlugo, useBatteryStatus } from "@/lib/plugo-context"
+import { useCumbreva, useBatteryStatus } from "@/lib/cumbreva-context"
 import { cn } from "@/lib/utils"
 
 export function VehicleCard({ compact = false }: { compact?: boolean }) {
-  const { state } = usePlugo()
+  const { state } = useCumbreva()
   const status = useBatteryStatus()
   const [open, setOpen] = React.useState(false)
 

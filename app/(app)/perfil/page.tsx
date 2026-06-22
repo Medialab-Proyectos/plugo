@@ -24,7 +24,7 @@ import {
 import { GlassCard } from "@/components/glass-card"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { usePlugo } from "@/lib/plugo-context"
+import { useCumbreva } from "@/lib/cumbreva-context"
 import { useTheme } from "@/lib/theme-context"
 import { cn } from "@/lib/utils"
 
@@ -39,7 +39,7 @@ const menuSections = [
     ],
   },
   {
-    title: "PLUGO",
+    title: "CUMBREVA",
     items: [
       { Icon: Gift, label: "Recompensas", href: "/perfil/recompensas", badge: "180 PC" },
       { Icon: Home, label: "Modo Anfitrión", href: "/perfil/anfitrion", badge: "Nuevo" },
@@ -57,7 +57,7 @@ const menuSections = [
 
 export default function PerfilPage() {
   const router = useRouter()
-  const { state, dispatch } = usePlugo()
+  const { state, dispatch } = useCumbreva()
   const v = state.vehicle
 
   const { theme, toggle: toggleTheme } = useTheme()
@@ -89,7 +89,7 @@ export default function PerfilPage() {
           </Avatar>
           <div className="min-w-0 flex-1">
             <p className="truncate text-base font-semibold">{state.userName || "Conductor"}</p>
-            <p className="truncate text-xs text-foreground-muted">conductor@plugo.app</p>
+            <p className="truncate text-xs text-foreground-muted">conductor@cumbreva.app</p>
             <div className="mt-1.5 inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-primary">
               <Sparkles className="h-2.5 w-2.5" />
               Explorador
@@ -100,7 +100,7 @@ export default function PerfilPage() {
         <div className="mt-4 grid grid-cols-3 gap-3 border-t border-border/60 pt-4">
           <ProfileStat Icon={Zap} label="Cargas" value="14" />
           <ProfileStat Icon={Leaf} label="CO₂" value="42 kg" tone="success" />
-          <ProfileStat Icon={Gift} label="PlugoCoins" value={state.plugoCoins.toString()} />
+          <ProfileStat Icon={Gift} label="CumbrevaCoins" value={state.cumbrevaCoins.toString()} />
         </div>
       </GlassCard>
 
@@ -206,7 +206,7 @@ export default function PerfilPage() {
         Cerrar sesión
       </Button>
 
-      <p className="text-center text-[10px] text-foreground-soft">PLUGO v1.0.0 · Hecho en Colombia</p>
+      <p className="text-center text-[10px] text-foreground-soft">CUMBREVA v1.0.0 · Hecho en Colombia</p>
     </div>
   )
 }

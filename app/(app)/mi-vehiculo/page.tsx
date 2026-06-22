@@ -21,7 +21,7 @@ import { EmptyState } from "@/components/empty-state"
 import { BatteryModal } from "@/components/battery-modal"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
-import { usePlugo } from "@/lib/plugo-context"
+import { useCumbreva } from "@/lib/cumbreva-context"
 import { batteryState } from "@/lib/decision"
 import { realRange, currentConditions } from "@/lib/autonomy"
 import { cn } from "@/lib/utils"
@@ -45,7 +45,7 @@ const tips = [
 ]
 
 export default function MiVehiculoPage() {
-  const { state } = usePlugo()
+  const { state } = useCumbreva()
   const [batteryOpen, setBatteryOpen] = React.useState(false)
   const v = state.vehicle
 

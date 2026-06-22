@@ -5,7 +5,7 @@ import { ChevronLeft } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 /**
- * PageHeader — PLUGO Design System v2
+ * PageHeader — CUMBREVA Design System v2
  *
  * iOS-style large title pattern with sticky background blur.
  * Back button uses ghost variant (icon only) → no longer confused with input.

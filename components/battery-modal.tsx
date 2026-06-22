@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dialog"
 import { Slider } from "@/components/ui/slider"
 import { Button } from "@/components/ui/button"
-import { usePlugo } from "@/lib/plugo-context"
+import { useCumbreva } from "@/lib/cumbreva-context"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
 
@@ -23,7 +23,7 @@ export function BatteryModal({
   open: boolean
   onOpenChange: (v: boolean) => void
 }) {
-  const { state, dispatch } = usePlugo()
+  const { state, dispatch } = useCumbreva()
   const [value, setValue] = React.useState(state.battery ?? 60)
 
   React.useEffect(() => {

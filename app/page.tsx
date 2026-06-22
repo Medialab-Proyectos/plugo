@@ -2,12 +2,11 @@
 
 import * as React from "react"
 import { useRouter } from "next/navigation"
-import { PlugoLogo } from "@/components/plugo-logo"
-import { usePlugo } from "@/lib/plugo-context"
+import { useCumbreva } from "@/lib/cumbreva-context"
 
 export default function SplashPage() {
   const router = useRouter()
-  const { state } = usePlugo()
+  const { state } = useCumbreva()
 
   React.useEffect(() => {
     const t = setTimeout(() => {
@@ -34,25 +33,39 @@ export default function SplashPage() {
       {/* energy ring */}
       <div aria-hidden className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
         <div className="relative h-72 w-72">
-          <div className="absolute inset-0 rounded-full border border-primary/20 animate-plugo-pulse" />
+          <div className="absolute inset-0 rounded-full border border-primary/20 animate-cumbreva-pulse" />
           <div
-            className="absolute inset-6 rounded-full border border-primary/30 animate-plugo-pulse"
+            className="absolute inset-6 rounded-full border border-primary/30 animate-cumbreva-pulse"
             style={{ animationDelay: "0.4s" }}
           />
           <div
-            className="absolute inset-14 rounded-full border border-primary/40 animate-plugo-pulse"
+            className="absolute inset-14 rounded-full border border-primary/40 animate-cumbreva-pulse"
             style={{ animationDelay: "0.8s" }}
           />
         </div>
       </div>
 
-      <div className="relative z-10 flex flex-col items-center gap-6 px-6 text-center">
-        <div className="animate-fade-in">
-          <PlugoLogo size="xl" showWordmark={false} />
+      <div className="relative z-10 flex flex-col items-center gap-7 px-6 text-center">
+        {/* Isologo brillante */}
+        <div
+          className="animate-fade-in relative flex h-24 w-24 items-center justify-center rounded-[28px] bg-gradient-to-br from-primary to-success glow-primary shadow-[0_0_70px_-2px_var(--primary)]"
+        >
+          <svg width={52} height={52} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path
+              d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z"
+              fill="#00150F"
+              stroke="#00150F"
+              strokeWidth="0.5"
+              strokeLinejoin="round"
+            />
+          </svg>
         </div>
+
+        {/* Wordmark imponente + eslogan */}
         <div className="animate-slide-up" style={{ animationDelay: "0.15s" }}>
-          <h1 className="text-4xl font-semibold tracking-tight text-gradient-primary">PLUGO</h1>
-          <p className="mt-3 max-w-[22ch] text-balance text-sm text-foreground-muted">
+          <h1 className="text-gradient-primary text-[3.25rem] font-black leading-none tracking-tight">CUMBREVA</h1>
+          <p className="mt-4 text-base font-bold text-foreground">Inicia tu copiloto eléctrico</p>
+          <p className="mx-auto mt-1.5 max-w-[26ch] text-balance text-sm text-foreground-muted">
             Carga sin ansiedad. Viaja sin límites.
           </p>
         </div>
@@ -60,13 +73,13 @@ export default function SplashPage() {
 
       <div className="absolute bottom-10 left-1/2 -translate-x-1/2">
         <div className="flex gap-1.5">
-          <span className="h-1.5 w-1.5 rounded-full bg-primary animate-plugo-pulse" />
+          <span className="h-1.5 w-1.5 rounded-full bg-primary animate-cumbreva-pulse" />
           <span
-            className="h-1.5 w-1.5 rounded-full bg-primary animate-plugo-pulse"
+            className="h-1.5 w-1.5 rounded-full bg-primary animate-cumbreva-pulse"
             style={{ animationDelay: "0.2s" }}
           />
           <span
-            className="h-1.5 w-1.5 rounded-full bg-primary animate-plugo-pulse"
+            className="h-1.5 w-1.5 rounded-full bg-primary animate-cumbreva-pulse"
             style={{ animationDelay: "0.4s" }}
           />
         </div>

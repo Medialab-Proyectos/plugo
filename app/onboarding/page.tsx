@@ -5,7 +5,7 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { PhoneFrame } from "@/components/phone-frame"
-import { PlugoLogo } from "@/components/plugo-logo"
+import { CumbrevaLogo } from "@/components/cumbreva-logo"
 import { Compass, CalendarCheck, Users } from "lucide-react"
 import { cn } from "@/lib/utils"
 
@@ -37,7 +37,7 @@ export default function OnboardingPage() {
     <PhoneFrame noBottomPad>
       <div className="flex min-h-dvh flex-col p-6">
         <div className="flex items-center justify-between">
-          <PlugoLogo size="sm" />
+          <CumbrevaLogo size="sm" />
           {!isLast && (
             <button
               type="button"

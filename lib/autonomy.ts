@@ -1,9 +1,9 @@
-import type { Vehicle, Preferences } from "@/lib/plugo-context"
+import type { Vehicle, Preferences } from "@/lib/cumbreva-context"
 
 /**
- * PLUGO — Modelo de autonomía real según la geografía.
+ * CUMBREVA — Modelo de autonomía real según la geografía.
  *
- * El valor diferenciador de PLUGO: no estimar la autonomía de forma lineal
+ * El valor diferenciador de CUMBREVA: no estimar la autonomía de forma lineal
  * (distancia / rango), sino ponderar las condiciones reales que más impactan
  * el consumo de un vehículo eléctrico:
  *   1. Relieve  — subir consume mucho; bajar recupera energía (regeneración).

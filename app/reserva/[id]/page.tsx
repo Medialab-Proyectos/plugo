@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
 import { Confetti } from "@/components/confetti"
 import { chargers, formatCOP } from "@/lib/mock-data"
-import { usePlugo } from "@/lib/plugo-context"
+import { useCumbreva } from "@/lib/cumbreva-context"
 import { cn } from "@/lib/utils"
 
 const slots = [
@@ -39,7 +39,7 @@ const durations = [
 export default function ReservaPage() {
   const params = useParams<{ id: string }>()
   const router = useRouter()
-  const { dispatch } = usePlugo()
+  const { dispatch } = useCumbreva()
   const charger = chargers.find((c) => c.id === params.id)
 
   const [step, setStep] = React.useState<"form" | "loading" | "success">("form")
@@ -80,7 +80,7 @@ export default function ReservaPage() {
           <div className="flex flex-1 flex-col items-center justify-center text-center">
             <div className="relative mb-6 animate-pop-in">
               <div className="absolute inset-0 -m-6 rounded-full bg-success/20 blur-2xl" />
-              <div className="relative flex h-24 w-24 items-center justify-center rounded-full bg-success text-[#00150F] glow-primary animate-plugo-glow">
+              <div className="relative flex h-24 w-24 items-center justify-center rounded-full bg-success text-[#00150F] glow-primary animate-cumbreva-glow">
                 <Check className="h-12 w-12" strokeWidth={3} />
               </div>
             </div>
@@ -100,7 +100,7 @@ export default function ReservaPage() {
             <GlassCard className="mt-3 w-full">
               <div className="flex items-center gap-2 text-warning">
                 <Sparkles className="h-4 w-4" />
-                <p className="text-sm font-medium">Ganaste 30 PlugoCoins</p>
+                <p className="text-sm font-medium">Ganaste 30 CumbrevaCoins</p>
               </div>
             </GlassCard>
           </div>
@@ -210,7 +210,7 @@ export default function ReservaPage() {
                 id="coins"
                 current={method}
                 onChange={setMethod}
-                title="PlugoCoins"
+                title="CumbrevaCoins"
                 subtitle="Usa 180 monedas (-$5.000)"
               />
             </div>

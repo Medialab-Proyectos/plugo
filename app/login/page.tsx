@@ -8,15 +8,15 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { TextField } from "@/components/ui/text-field"
 import { PhoneFrame } from "@/components/phone-frame"
-import { PlugoLogo } from "@/components/plugo-logo"
+import { CumbrevaLogo } from "@/components/cumbreva-logo"
 import { Spinner } from "@/components/ui/spinner"
 import { Mail, ArrowLeft, Lock } from "lucide-react"
-import { usePlugo } from "@/lib/plugo-context"
+import { useCumbreva } from "@/lib/cumbreva-context"
 import { GoogleIcon, AppleIcon } from "@/components/brand-icons"
 
 export default function LoginPage() {
   const router = useRouter()
-  const { dispatch } = usePlugo()
+  const { dispatch } = useCumbreva()
   const [mode, setMode] = React.useState<"social" | "email">("social")
   const [email, setEmail] = React.useState("")
   const [password, setPassword] = React.useState("")
@@ -43,7 +43,7 @@ export default function LoginPage() {
     setLoading(true)
     setTimeout(() => {
       dispatch({ type: "LOGIN", name: email.split("@")[0] || "Conductor" })
-      toast.success("Bienvenido a Plugo")
+      toast.success("Bienvenido a Cumbreva")
       router.replace("/vehiculo/nuevo")
     }, 700)
   }
@@ -62,9 +62,9 @@ export default function LoginPage() {
         </button>
 
         <div className="mb-10 flex flex-col items-start gap-5">
-          <PlugoLogo />
+          <CumbrevaLogo />
           <div>
-            <h1 className="text-display text-balance">Bienvenido a Plugo</h1>
+            <h1 className="text-display text-balance">Bienvenido a Cumbreva</h1>
             <p className="mt-2 text-sm text-foreground-muted">Tu ecosistema EV, siempre contigo.</p>
           </div>
         </div>

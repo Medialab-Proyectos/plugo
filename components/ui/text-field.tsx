@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils"
 import { Label } from "@/components/ui/label"
 
 /**
- * TextField — PLUGO Design System v2
+ * TextField — CUMBREVA Design System v2
  *
  * Composite that wraps an input/textarea/select with:
  *  - Label (always above the field for clarity, M3 outlined-style)

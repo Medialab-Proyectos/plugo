@@ -4,7 +4,7 @@
 @custom-variant dark (&:is(.dark *));
 
 /* =============================================================
-   PLUGO Design System v2
+   CUMBREVA Design System v2
    Mobile-first · Material 3 Expressive + iOS HIG hybrid
    ============================================================= */
 
@@ -191,8 +191,8 @@
 }
 
 @theme inline {
-  --font-sans: var(--font-sans-plugo), 'Geist', ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-mono-plugo), 'Geist Mono', ui-monospace, monospace;
+  --font-sans: var(--font-sans-cumbreva), 'Geist', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-mono-cumbreva), 'Geist Mono', ui-monospace, monospace;
 
   /* Surfaces */
   --color-background: var(--background);
@@ -446,20 +446,20 @@
 /* ============================
    Animations
    ============================ */
-@keyframes plugo-pulse {
+@keyframes cumbreva-pulse {
   0%, 100% { opacity: 0.6; transform: scale(1); }
   50% { opacity: 1; transform: scale(1.05); }
 }
-.animate-plugo-pulse {
-  animation: plugo-pulse 2.4s ease-in-out infinite;
+.animate-cumbreva-pulse {
+  animation: cumbreva-pulse 2.4s ease-in-out infinite;
 }
 
-@keyframes plugo-glow {
+@keyframes cumbreva-glow {
   0%, 100% { box-shadow: 0 0 0 0 rgba(0, 241, 199, 0.5); }
   50% { box-shadow: 0 0 0 12px rgba(0, 241, 199, 0); }
 }
-.animate-plugo-glow {
-  animation: plugo-glow 2s ease-out infinite;
+.animate-cumbreva-glow {
+  animation: cumbreva-glow 2s ease-out infinite;
 }
 
 @keyframes slide-up {
@@ -485,7 +485,7 @@
 }
 
 ::view-transition-new(root) {
-  animation: theme-circle-reveal 620ms var(--ease-out-expo) both;
+  animation: theme-circle-reveal 1100ms var(--ease-out-expo) both;
   clip-path: circle(0 at var(--theme-x, 50%) var(--theme-y, 50%));
 }
 
@@ -573,8 +573,8 @@
     opacity: 1 !important;
     transform: none !important;
   }
-  .animate-plugo-pulse,
-  .animate-plugo-glow,
+  .animate-cumbreva-pulse,
+  .animate-cumbreva-glow,
   .cta-pulse {
     animation: none !important;
   }

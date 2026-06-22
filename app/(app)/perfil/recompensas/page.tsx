@@ -4,7 +4,7 @@ import * as React from "react"
 import { useRouter } from "next/navigation"
 import { ArrowLeft, Award, Coffee, Gift, Sparkles, TrendingUp, Wrench, Zap } from "lucide-react"
 import { GlassCard } from "@/components/glass-card"
-import { usePlugo } from "@/lib/plugo-context"
+import { useCumbreva } from "@/lib/cumbreva-context"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
 
@@ -12,7 +12,7 @@ const rewards = [
   { Icon: Zap, name: "Carga gratis", points: 1500, description: "1 sesión hasta 30 kWh", featured: true },
   { Icon: Coffee, name: "Café Juan Valdez", points: 400, description: "Bebida en cualquier estación" },
   { Icon: Wrench, name: "Lavado premium", points: 800, description: "Detallado completo BlueWash" },
-  { Icon: Gift, name: "Membresía PLUGO+", points: 3000, description: "1 mes gratis de beneficios" },
+  { Icon: Gift, name: "Membresía CUMBREVA+", points: 3000, description: "1 mes gratis de beneficios" },
 ]
 
 const milestones = [
@@ -31,8 +31,8 @@ const history = [
 
 export default function RecompensasPage() {
   const router = useRouter()
-  const { state } = usePlugo()
-  const points = state.plugoCoins
+  const { state } = useCumbreva()
+  const points = state.cumbrevaCoins
   const next = milestones.find((m) => m.points > points) ?? milestones[milestones.length - 1]
   const current = [...milestones].reverse().find((m) => m.points <= points) ?? milestones[0]
   const progress = next ? Math.min(100, Math.round((points / next.points) * 100)) : 100
@@ -49,10 +49,10 @@ export default function RecompensasPage() {
       </button>
 
       <header>
-        <p className="text-[10px] font-semibold uppercase tracking-widest text-primary">PLUGO Rewards</p>
+        <p className="text-[10px] font-semibold uppercase tracking-widest text-primary">CUMBREVA Rewards</p>
         <h1 className="mt-1 text-2xl font-semibold tracking-tight">Recompensas</h1>
         <p className="mt-1 text-xs text-foreground-muted">
-          Cada carga, kilómetro y reseña suma. Canjea PlugoCoins por experiencias.
+          Cada carga, kilómetro y reseña suma. Canjea CumbrevaCoins por experiencias.
         </p>
       </header>
 

@@ -38,7 +38,7 @@ export function ChargerMap({
       {/* user location */}
       <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
         <div className="relative">
-          <div className="absolute inset-0 -m-3 animate-plugo-glow rounded-full bg-primary/30" />
+          <div className="absolute inset-0 -m-3 animate-cumbreva-glow rounded-full bg-primary/30" />
           <div className="relative h-4 w-4 rounded-full bg-primary ring-4 ring-background" />
         </div>
       </div>

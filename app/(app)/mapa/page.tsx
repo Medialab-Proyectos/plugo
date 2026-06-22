@@ -8,7 +8,7 @@ import { ChargerCard } from "@/components/charger-card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { chargers, formatCOP, type Charger } from "@/lib/mock-data"
-import { usePlugo } from "@/lib/plugo-context"
+import { useCumbreva } from "@/lib/cumbreva-context"
 import {
   chargerProbability,
   probabilityClasses,
@@ -34,7 +34,7 @@ const filters = [
 type SheetState = "collapsed" | "mid" | "expanded"
 
 export default function MapaPage() {
-  const { state } = usePlugo()
+  const { state } = useCumbreva()
   const [search, setSearch] = React.useState("")
   const [activeFilters, setActiveFilters] = React.useState<string[]>(["disponibles"])
   const [selectedId, setSelectedId] = React.useState<string | null>(null)
@@ -271,7 +271,7 @@ function DraggableSheet({
 }
 
 function SelectedChargerCard({ charger }: { charger: Charger }) {
-  const { state } = usePlugo()
+  const { state } = useCumbreva()
   const prob = chargerProbability(charger)
   const lvl = probabilityLevel(prob)
   const cls = probabilityClasses[lvl]

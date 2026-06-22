@@ -3,7 +3,7 @@
 import * as React from "react"
 import { Heart } from "lucide-react"
 import { toast } from "sonner"
-import { usePlugo } from "@/lib/plugo-context"
+import { useCumbreva } from "@/lib/cumbreva-context"
 import { cn } from "@/lib/utils"
 
 export function FavoriteButton({
@@ -17,7 +17,7 @@ export function FavoriteButton({
   className?: string
   size?: number
 }) {
-  const { state, dispatch } = usePlugo()
+  const { state, dispatch } = useCumbreva()
   const isFav = state.favoriteServices.includes(serviceId)
 
   const onToggle = (e: React.MouseEvent) => {

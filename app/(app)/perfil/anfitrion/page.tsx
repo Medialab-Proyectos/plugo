@@ -30,7 +30,7 @@ const benefits = [
 
 const steps = [
   { num: 1, title: "Verifica tu electrolinera", description: "Inspección remota gratuita." },
-  { num: 2, title: "Configura precio y horarios", description: "PLUGO sugiere tarifas óptimas." },
+  { num: 2, title: "Configura precio y horarios", description: "CUMBREVA sugiere tarifas óptimas." },
   { num: 3, title: "Recibe huéspedes", description: "Activación automática y pagos seguros." },
 ]
 
@@ -117,7 +117,7 @@ export default function AnfitrionPage() {
               <DollarSign className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-primary" />
               <Input id="price" type="number" defaultValue="900" className="h-11 pl-10" />
             </div>
-            <p className="text-[11px] text-muted-foreground">PLUGO sugiere $850 - $1.100 en tu zona.</p>
+            <p className="text-[11px] text-muted-foreground">CUMBREVA sugiere $850 - $1.100 en tu zona.</p>
           </div>
 
           <div className="flex items-center justify-between rounded-2xl bg-secondary/40 px-4 py-3">
@@ -142,7 +142,7 @@ export default function AnfitrionPage() {
           Solicitar verificación
         </Button>
         <p className="text-center text-[11px] text-muted-foreground">
-          Al continuar aceptas los términos del Programa Anfitrión PLUGO.
+          Al continuar aceptas los términos del Programa Anfitrión CUMBREVA.
         </p>
       </div>
     )
@@ -169,7 +169,7 @@ export default function AnfitrionPage() {
             Convierte tu electrolinera en ingreso pasivo
           </h1>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground text-pretty">
-            Únete a la red PLUGO de anfitriones y comparte tu wallbox cuando no lo uses. Sin complicaciones, con
+            Únete a la red CUMBREVA de anfitriones y comparte tu wallbox cuando no lo uses. Sin complicaciones, con
             seguro y soporte 24/7.
           </p>
         </div>

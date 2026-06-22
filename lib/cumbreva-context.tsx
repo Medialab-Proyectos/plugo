@@ -39,7 +39,7 @@ type State = {
   activeVehicleIndex: number
   battery: Battery
   preferences: Preferences
-  plugoCoins: number
+  cumbrevaCoins: number
   streakDays: number
   isHost: boolean
   favoriteServices: string[]
@@ -107,7 +107,7 @@ const loggedOutState: State = {
   activeVehicleIndex: 0,
   battery: 0,
   preferences: defaultPreferences,
-  plugoCoins: 0,
+  cumbrevaCoins: 0,
   streakDays: 0,
   isHost: false,
   favoriteServices: [],
@@ -121,7 +121,7 @@ const loggedInState: State = {
   activeVehicleIndex: 0,
   battery: 42,
   preferences: defaultPreferences,
-  plugoCoins: 1250,
+  cumbrevaCoins: 1250,
   streakDays: 3,
   isHost: false,
   favoriteServices: [],
@@ -163,25 +163,25 @@ function reducer(state: State, action: Action): State {
     case "SET_HOST":
       return { ...state, isHost: action.isHost }
     case "ADD_COINS":
-      return { ...state, plugoCoins: state.plugoCoins + action.amount }
+      return { ...state, cumbrevaCoins: state.cumbrevaCoins + action.amount }
     default:
       return state
   }
 }
 
-const PlugoContext = React.createContext<{
+const CumbrevaContext = React.createContext<{
   state: State
   dispatch: React.Dispatch<Action>
 } | null>(null)
 
-const STORAGE_KEY = "plugo:state:v2"
+const STORAGE_KEY = "cumbreva:state:v2"
 
-export function PlugoProvider({ children }: { children: React.ReactNode }) {
+export function CumbrevaProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = React.useReducer(reducer, initialState, (init) => {
     if (typeof window === "undefined") return init
     try {
       // Clear old storage keys
-      window.localStorage.removeItem("plugo:state:v1")
+      window.localStorage.removeItem("cumbreva:state:v1")
       const raw = window.localStorage.getItem(STORAGE_KEY)
       if (!raw) return init
       const parsed = JSON.parse(raw) as State
@@ -198,12 +198,12 @@ export function PlugoProvider({ children }: { children: React.ReactNode }) {
     } catch {}
   }, [state])
 
-  return <PlugoContext.Provider value={{ state, dispatch }}>{children}</PlugoContext.Provider>
+  return <CumbrevaContext.Provider value={{ state, dispatch }}>{children}</CumbrevaContext.Provider>
 }
 
-export function usePlugo() {
-  const ctx = React.useContext(PlugoContext)
-  if (!ctx) throw new Error("usePlugo debe usarse dentro de PlugoProvider")
+export function useCumbreva() {
+  const ctx = React.useContext(CumbrevaContext)
+  if (!ctx) throw new Error("useCumbreva debe usarse dentro de CumbrevaProvider")
   return ctx
 }
 
@@ -211,7 +211,7 @@ export function useBatteryStatus(): {
   level: "verde" | "amarillo" | "rojo" | "sin-dato"
   message: string
 } {
-  const { state } = usePlugo()
+  const { state } = useCumbreva()
   const b = state.battery
   if (b === null) {
     return { level: "sin-dato", message: "Puedes moverte con tranquilidad" }

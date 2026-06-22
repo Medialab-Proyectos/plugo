@@ -3,7 +3,7 @@ import * as React from 'react'
 import { cn } from '@/lib/utils'
 
 /**
- * Input — PLUGO Design System v2
+ * Input — CUMBREVA Design System v2
  *
  * Visually distinct from buttons:
  *  - rounded-2xl (NEVER pill)

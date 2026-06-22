@@ -30,7 +30,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { StatusBadge } from "@/components/status-badge"
 import { documentTemplates } from "@/lib/mock-data"
-import { usePlugo } from "@/lib/plugo-context"
+import { useCumbreva } from "@/lib/cumbreva-context"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
 
@@ -266,7 +266,7 @@ function DocumentRow({ doc, onOpen }: { doc: Doc; onOpen: () => void }) {
 
 /* Carné digital dentro del visor */
 function DocumentViewer({ doc, onPresent }: { doc: Doc; onPresent: () => void }) {
-  const { state } = usePlugo()
+  const { state } = useCumbreva()
   const v = state.vehicle
   const Icon = iconMap[doc.id] || FileText
   const status = statusMap[doc.status]
@@ -313,7 +313,7 @@ function DocCard({ doc, plate, owner }: { doc: Doc; plate?: string; owner?: stri
       <div aria-hidden className="absolute -right-10 -top-10 h-36 w-36 rounded-full bg-[#92ffe7]/20 blur-3xl" />
       <div className="relative flex items-start justify-between">
         <div>
-          <p className="text-[10px] uppercase tracking-widest text-white/60">PLUGO · Bóveda</p>
+          <p className="text-[10px] uppercase tracking-widest text-white/60">CUMBREVA · Bóveda</p>
           <p className="mt-1 text-lg font-semibold">{doc.name}</p>
         </div>
         <span
@@ -355,7 +355,7 @@ function Field({ label, value }: { label: string; value: string }) {
 
 /* Pantalla completa, alto contraste, para mostrar a la autoridad */
 function PresentMode({ doc, onClose }: { doc: Doc; onClose: () => void }) {
-  const { state } = usePlugo()
+  const { state } = useCumbreva()
   return (
     <div className="fixed inset-0 z-[60] flex flex-col bg-background p-5 animate-fade-in">
       <div className="flex items-center justify-between">
@@ -373,7 +373,7 @@ function PresentMode({ doc, onClose }: { doc: Doc; onClose: () => void }) {
       <div className="flex flex-1 flex-col items-center justify-center gap-5">
         <DocCard doc={doc} plate={state.vehicle?.plate} owner={state.userName} />
         <p className="text-center text-sm text-foreground-muted">
-          Muestra esta pantalla a la autoridad.<br />Verificación oficial dentro de Plugo.
+          Muestra esta pantalla a la autoridad.<br />Verificación oficial dentro de Cumbreva.
         </p>
       </div>
 

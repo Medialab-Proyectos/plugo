@@ -5,12 +5,12 @@ import { useRouter } from "next/navigation"
 import { ArrowLeft, Battery, Bell, Globe, Leaf, Moon, Zap } from "lucide-react"
 import { Switch } from "@/components/ui/switch"
 import { GlassCard } from "@/components/glass-card"
-import { usePlugo } from "@/lib/plugo-context"
+import { useCumbreva } from "@/lib/cumbreva-context"
 import { cn } from "@/lib/utils"
 
 export default function PreferenciasPage() {
   const router = useRouter()
-  const { state, dispatch } = usePlugo()
+  const { state, dispatch } = useCumbreva()
   const { preferences } = state
 
   const setMapPriority = (mapPriority: typeof preferences.mapPriority) =>
@@ -39,7 +39,7 @@ export default function PreferenciasPage() {
       <header>
         <p className="text-[10px] font-semibold uppercase tracking-widest text-primary">Configuración</p>
         <h1 className="mt-1 text-2xl font-semibold tracking-tight">Preferencias</h1>
-        <p className="mt-1 text-xs text-foreground-muted">Personaliza cómo PLUGO toma decisiones por ti.</p>
+        <p className="mt-1 text-xs text-foreground-muted">Personaliza cómo CUMBREVA toma decisiones por ti.</p>
       </header>
 
       <Section title="Carga inteligente" Icon={Battery}>
@@ -92,7 +92,7 @@ export default function PreferenciasPage() {
         />
         <Toggle
           label="Promociones y precios"
-          description="Descuentos en aliados PLUGO+."
+          description="Descuentos en aliados CUMBREVA+."
           checked={preferences.notifications.prices}
           onCheckedChange={(v) => setNotif("prices", v)}
         />
@@ -103,7 +103,7 @@ export default function PreferenciasPage() {
       </Section>
 
       <Section title="App" Icon={Moon}>
-        <Toggle label="Modo oscuro" description="Por defecto en PLUGO." checked disabled />
+        <Toggle label="Modo oscuro" description="Por defecto en CUMBREVA." checked disabled />
         <Field label="Idioma" description="Español (Colombia)" Icon={Globe} />
       </Section>
     </div>

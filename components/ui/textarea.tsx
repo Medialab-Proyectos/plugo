@@ -3,7 +3,7 @@ import * as React from 'react'
 import { cn } from '@/lib/utils'
 
 /**
- * Textarea — PLUGO Design System v2
+ * Textarea — CUMBREVA Design System v2
  * Same recessed surface language as Input. Distinct from Buttons.
  */
 function Textarea({ className, ...props }: React.ComponentProps<'textarea'>) {

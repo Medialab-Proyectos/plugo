@@ -23,7 +23,7 @@ import { TextField } from "@/components/ui/text-field"
 import { StatusBadge } from "@/components/status-badge"
 import { InlineAlert } from "@/components/inline-alert"
 import { chargers, popularRoutes } from "@/lib/mock-data"
-import { usePlugo } from "@/lib/plugo-context"
+import { useCumbreva } from "@/lib/cumbreva-context"
 import {
   estimatedMinutes,
   formatMinutes,
@@ -51,7 +51,7 @@ type Plan = {
 }
 
 export default function RutasPage() {
-  const { state } = usePlugo()
+  const { state } = useCumbreva()
   const [origin, setOrigin] = React.useState("Mi ubicación actual")
   const [destination, setDestination] = React.useState("")
   const [plan, setPlan] = React.useState<Plan | null>(null)
@@ -431,7 +431,7 @@ function CopilotRoute({ plan }: { plan: Plan }) {
         <Icon className="h-5 w-5" />
       </div>
       <div className="min-w-0 flex-1">
-        <p className="text-[10px] font-semibold uppercase tracking-widest text-foreground-soft">Copiloto Plugo</p>
+        <p className="text-[10px] font-semibold uppercase tracking-widest text-foreground-soft">Copiloto Cumbreva</p>
         <p className="mt-0.5 text-[13px] leading-snug text-foreground">{text}</p>
       </div>
     </div>

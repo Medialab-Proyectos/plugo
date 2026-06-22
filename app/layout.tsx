@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next"
 import localFont from "next/font/local"
 import { Analytics } from "@vercel/analytics/next"
 import { Toaster } from "@/components/ui/sonner"
-import { PlugoProvider } from "@/lib/plugo-context"
+import { CumbrevaProvider } from "@/lib/cumbreva-context"
 import { ThemeProvider } from "@/lib/theme-context"
 import "./globals.css"
 
@@ -15,23 +15,23 @@ const inter = localFont({
     { path: "../public/Dominio/letra/Inter_28pt-ExtraBold.ttf", weight: "800", style: "normal" },
     { path: "../public/Dominio/letra/Inter_28pt-Black.ttf", weight: "900", style: "normal" },
   ],
-  variable: "--font-sans-plugo",
+  variable: "--font-sans-cumbreva",
   display: "swap",
 })
 
 const jetbrains = localFont({
   src: "../public/Dominio/letra/Inter_28pt-Regular.ttf",
-  variable: "--font-mono-plugo",
+  variable: "--font-mono-cumbreva",
   display: "swap",
 })
 
 export const metadata: Metadata = {
-  title: "PLUGO — Carga sin ansiedad. Viaja sin límites.",
+  title: "CUMBREVA — Carga sin ansiedad. Viaja sin límites.",
   description:
-    "PLUGO es el ecosistema premium para propietarios de vehículos eléctricos en Colombia y Latinoamérica. Encuentra electrolineras, calcula tu autonomía real según la geografía y planea rutas sin ansiedad.",
+    "CUMBREVA es el ecosistema premium para propietarios de vehículos eléctricos en Colombia y Latinoamérica. Encuentra electrolineras, calcula tu autonomía real según la geografía y planea rutas sin ansiedad.",
   generator: "v0.app",
-  applicationName: "PLUGO",
-  keywords: ["EV", "vehículo eléctrico", "electrolineras", "autonomía", "Colombia", "PLUGO", "movilidad eléctrica"],
+  applicationName: "CUMBREVA",
+  keywords: ["EV", "vehículo eléctrico", "electrolineras", "autonomía", "Colombia", "CUMBREVA", "movilidad eléctrica"],
 }
 
 export const viewport: Viewport = {
@@ -53,16 +53,16 @@ export default function RootLayout({
         {/* Anti-flash: aplica el tema antes del primer paint */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem('plugo:theme');var light=t?t==='light':true;var d=document.documentElement;d.classList.toggle('light',light);var meta=document.querySelector('meta[name=theme-color]');if(meta)meta.setAttribute('content',light?'#f5f7f9':'#070b10');}catch(e){}})();`,
+            __html: `(function(){try{var t=localStorage.getItem('cumbreva:theme');var light=t?t==='light':true;var d=document.documentElement;d.classList.toggle('light',light);var meta=document.querySelector('meta[name=theme-color]');if(meta)meta.setAttribute('content',light?'#f5f7f9':'#070b10');}catch(e){}})();`,
           }}
         />
       </head>
       <body className="font-sans antialiased">
         <ThemeProvider>
-          <PlugoProvider>
+          <CumbrevaProvider>
             <div className="min-h-dvh w-full">{children}</div>
             <Toaster position="top-center" />
-          </PlugoProvider>
+          </CumbrevaProvider>
         </ThemeProvider>
         {process.env.NODE_ENV === "production" && <Analytics />}
       </body>

@@ -1,5 +1,5 @@
 import type { Charger, ConnectorType } from "@/lib/mock-data"
-import type { Vehicle } from "@/lib/plugo-context"
+import type { Vehicle } from "@/lib/cumbreva-context"
 
 /** Estimación de probabilidad de disponibilidad (0-100). Determinista por id. */
 export function chargerProbability(c: Charger): number {

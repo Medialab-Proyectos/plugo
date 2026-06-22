@@ -10,7 +10,7 @@ import { StatusBadge } from "@/components/status-badge"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { chargers, formatCOP } from "@/lib/mock-data"
-import { usePlugo } from "@/lib/plugo-context"
+import { useCumbreva } from "@/lib/cumbreva-context"
 
 const statusMap = {
   disponible: { label: "Disponible ahora", tone: "success" as const },
@@ -22,7 +22,7 @@ export default function ChargerDetailPage() {
   const router = useRouter()
   const params = useParams<{ id: string }>()
   const charger = chargers.find((c) => c.id === params.id)
-  const { state } = usePlugo()
+  const { state } = useCumbreva()
 
   if (!charger) return notFound()
 

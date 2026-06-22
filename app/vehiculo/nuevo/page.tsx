@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { vehicleCatalog } from "@/lib/mock-data"
-import { usePlugo } from "@/lib/plugo-context"
+import { useCumbreva } from "@/lib/cumbreva-context"
 import { cn } from "@/lib/utils"
 
 type FormState = {
@@ -79,7 +79,7 @@ const recommendedConnectorByBrand: Record<string, string> = {
 
 export default function VehicleWizardPage() {
   const router = useRouter()
-  const { dispatch } = usePlugo()
+  const { dispatch } = useCumbreva()
   const [step, setStep] = React.useState(1)
   const [form, setForm] = React.useState<FormState>(initialForm)
   const totalSteps = 5
@@ -127,7 +127,7 @@ export default function VehicleWizardPage() {
       },
     })
     dispatch({ type: "ADD_COINS", amount: 50 })
-    toast.success("Vehículo registrado", { description: "Ganaste 50 PlugoCoins por completar tu perfil." })
+    toast.success("Vehículo registrado", { description: "Ganaste 50 CumbrevaCoins por completar tu perfil." })
     router.replace("/inicio")
   }
 
@@ -707,7 +707,7 @@ function Step5({ form }: { form: FormState }) {
           <Check className="h-4 w-4" />
         </div>
         <div className="text-sm">
-          <p className="font-medium">Ganaste 50 PlugoCoins</p>
+          <p className="font-medium">Ganaste 50 CumbrevaCoins</p>
           <p className="text-xs text-foreground-muted">Por completar el registro de tu vehículo.</p>
         </div>
       </GlassCard>

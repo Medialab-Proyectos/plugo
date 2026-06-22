@@ -48,13 +48,13 @@ export function ThemeToggle({ className }: { className?: string }) {
     >
       <Sun
         className={cn(
-          "absolute h-5 w-5 transition-all duration-300",
+          "absolute h-5 w-5 transition-all duration-700",
           dark ? "rotate-0 scale-100 opacity-100" : "rotate-90 scale-0 opacity-0",
         )}
       />
       <Moon
         className={cn(
-          "absolute h-5 w-5 transition-all duration-300",
+          "absolute h-5 w-5 transition-all duration-700",
           dark ? "-rotate-90 scale-0 opacity-0" : "rotate-0 scale-100 opacity-100",
         )}
       />
