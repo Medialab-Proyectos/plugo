@@ -41,6 +41,9 @@ jobs:
       - name: Sync Android wrapper
         run: npx cap sync android
 
+      - name: Prepare Gradle wrapper
+        run: chmod +x android/gradlew
+
       - name: Build debug APK
         working-directory: android
         run: ./gradlew assembleDebug
