@@ -53,7 +53,7 @@ export default function RootLayout({
         {/* Anti-flash: aplica el tema antes del primer paint */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem('cumbreva:theme');var light=t?t==='light':true;var d=document.documentElement;d.classList.toggle('light',light);var meta=document.querySelector('meta[name=theme-color]');if(meta)meta.setAttribute('content',light?'#f5f7f9':'#070b10');}catch(e){}})();`,
+            __html: `(function(){try{var t=localStorage.getItem('cumbreva:theme');var light=t?t==='light':window.matchMedia('(prefers-color-scheme: light)').matches;var d=document.documentElement;d.classList.toggle('light',light);var meta=document.querySelector('meta[name=theme-color]');if(meta)meta.setAttribute('content',light?'#f5f7f9':'#070b10');}catch(e){}})();`,
           }}
         />
       </head>

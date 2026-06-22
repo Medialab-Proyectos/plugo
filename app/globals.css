@@ -462,6 +462,15 @@
   animation: cumbreva-glow 2s ease-out infinite;
 }
 
+/* Halo verde sutil (color del isologo) para el vehículo "prendido" — conserva la sombra base. */
+@keyframes cumbreva-halo-soft {
+  0%, 100% { box-shadow: 0 24px 60px -36px rgba(0, 0, 0, 0.5), 0 0 0 0 rgba(0, 241, 199, 0); }
+  50% { box-shadow: 0 24px 60px -36px rgba(0, 0, 0, 0.5), 0 0 14px 1px rgba(0, 241, 199, 0.2); }
+}
+.animate-cumbreva-halo-soft {
+  animation: cumbreva-halo-soft 3s ease-in-out infinite;
+}
+
 @keyframes slide-up {
   from { transform: translateY(16px); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
@@ -554,6 +563,24 @@
     width var(--duration-base) var(--ease-spring);
 }
 
+/* ─── Subtle yellow charge glow for Cargar button when battery < 50% ─── */
+@keyframes charge-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(234, 179, 8, 0.3), inset 0 0 6px rgba(234, 179, 8, 0.04); }
+  50% { box-shadow: 0 0 10px 1px rgba(234, 179, 8, 0.2), inset 0 0 8px rgba(234, 179, 8, 0.06); }
+}
+.charge-glow-btn {
+  animation: charge-glow 2.5s ease-in-out infinite;
+}
+
+/* ─── Blinking red dot for expired doc alerts ─── */
+@keyframes doc-blink {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.3; transform: scale(0.7); }
+}
+.doc-alert-blink {
+  animation: doc-blink 1s ease-in-out infinite;
+}
+
 /* ============================
    Accessibility: reduced motion
    ============================ */
@@ -575,7 +602,9 @@
   }
   .animate-cumbreva-pulse,
   .animate-cumbreva-glow,
-  .cta-pulse {
+  .cta-pulse,
+  .charge-glow-btn,
+  .doc-alert-blink {
     animation: none !important;
   }
 }

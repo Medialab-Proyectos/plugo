@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">CUMBREVA</string>
+    <string name="title_activity_main">CUMBREVA</string>
+    <string name="package_name">com.cumbreva.app</string>
+    <string name="custom_url_scheme">com.cumbreva.app</string>
+</resources>

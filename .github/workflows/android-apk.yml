@@ -1,0 +1,52 @@
+name: android-apk
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+    env:
+      CAPACITOR_APP_URL: ${{ vars.CAPACITOR_APP_URL }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate remote URL
+        run: |
+          if [ -z "${CAPACITOR_APP_URL}" ]; then
+            echo "Define la variable del repositorio CAPACITOR_APP_URL con la URL web que quieres embeber."
+            exit 1
+          fi
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Sync Android wrapper
+        run: npx cap sync android
+
+      - name: Build debug APK
+        working-directory: android
+        run: ./gradlew assembleDebug
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: cumbreva-debug-apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk

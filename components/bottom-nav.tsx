@@ -10,7 +10,7 @@ const tabs = [
   { href: "/inicio", label: "Inicio", Icon: Home },
   { href: "/mapa", label: "Mapa", Icon: MapPinned },
   { href: "/servicios", label: "Explora", Icon: Grid2X2 },
-  { href: "/mi-vehiculo", label: "Vehículos", Icon: CarFront },
+  { href: "/mi-vehiculo", label: "Garaje", Icon: CarFront },
   { href: "/perfil", label: "Perfil", Icon: UserCircle },
 ]
 

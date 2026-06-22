@@ -139,7 +139,8 @@ function reducer(state: State, action: Action): State {
       return { ...state, vehicle: action.vehicle }
     case "ADD_VEHICLE": {
       const vehicles = [...state.vehicles, action.vehicle]
-      return { ...state, vehicles, vehicle: state.vehicle ?? action.vehicle }
+      // El vehículo recién creado queda como el activo y visible en el carrusel.
+      return { ...state, vehicles, vehicle: action.vehicle, activeVehicleIndex: vehicles.length - 1 }
     }
     case "SET_ACTIVE_VEHICLE": {
       const idx = action.index

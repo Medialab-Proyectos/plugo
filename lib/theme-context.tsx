@@ -46,7 +46,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       setIsSystem(false)
       apply(stored)
     } else {
-      const sys = "light"
+      const sys = systemTheme()
       setThemeState(sys)
       setIsSystem(true)
       apply(sys)

@@ -2,7 +2,17 @@
 
 import * as React from "react"
 import { useRouter } from "next/navigation"
-import { ArrowLeft, ArrowRight, Car, Bike, Truck, HelpCircle, Camera, Check, Star } from "lucide-react"
+import {
+  ArrowLeft,
+  ArrowRight,
+  Bike,
+  Camera,
+  Car,
+  Check,
+  HelpCircle,
+  Star,
+  Truck,
+} from "lucide-react"
 import { toast } from "sonner"
 import { PhoneFrame } from "@/components/phone-frame"
 import { Stepper } from "@/components/stepper"
@@ -49,20 +59,20 @@ const initialForm: FormState = {
 }
 
 const types = [
-  { id: "auto", label: "Automóvil", Icon: Car },
+  { id: "auto", label: "Automovil", Icon: Car },
   { id: "suv", label: "SUV", Icon: Car },
   { id: "camioneta", label: "Camioneta", Icon: Truck },
-  { id: "moto", label: "Moto eléctrica", Icon: Bike },
-  { id: "otro", label: "Otro vehículo", Icon: HelpCircle },
+  { id: "moto", label: "Moto electrica", Icon: Bike },
+  { id: "otro", label: "Otro vehiculo", Icon: HelpCircle },
 ]
 
 const connectors = [
-  { id: "CCS2", label: "CCS2", desc: "Carga rápida estándar en muchas estaciones modernas." },
-  { id: "Tipo 2", label: "Tipo 2", desc: "Común en carga AC y puntos residenciales." },
-  { id: "CCS1", label: "CCS1", desc: "Usado en algunos vehículos importados." },
-  { id: "Tipo 1", label: "Tipo 1", desc: "Frecuente en algunos modelos antiguos o importados." },
-  { id: "GB/T", label: "GB/T", desc: "Común en varios vehículos de origen chino." },
-  { id: "no-seguro", label: "No estoy seguro", desc: "Te ayudamos a identificarlo más adelante." },
+  { id: "CCS2", label: "CCS2", desc: "Carga rapida comun en estaciones modernas." },
+  { id: "Tipo 2", label: "Tipo 2", desc: "Muy usado en carga AC y puntos residenciales." },
+  { id: "CCS1", label: "CCS1", desc: "Comun en algunos vehiculos importados." },
+  { id: "Tipo 1", label: "Tipo 1", desc: "Se ve en modelos mas antiguos o importados." },
+  { id: "GB/T", label: "GB/T", desc: "Presente en varios vehiculos de origen chino." },
+  { id: "no-seguro", label: "No estoy seguro", desc: "Luego te ayudamos a identificarlo." },
 ]
 
 const adapterOptions = ["CCS2 a GB/T", "CCS2 a CCS1", "Tipo 2 a Tipo 1", "Otro adaptador"]
@@ -83,35 +93,36 @@ export default function VehicleWizardPage() {
   const [step, setStep] = React.useState(1)
   const [form, setForm] = React.useState<FormState>(initialForm)
   const totalSteps = 5
+  const recommendedConnector = recommendedConnectorByBrand[form.brand] || null
 
   const update = <K extends keyof FormState>(key: K, value: FormState[K]) =>
-    setForm((f) => ({ ...f, [key]: value }))
+    setForm((current) => ({ ...current, [key]: value }))
 
   const canContinue = (() => {
     if (step === 1) return !!form.type && (form.type !== "otro" || form.customType.trim().length > 0)
-    if (step === 2) return !!form.brand && !!form.model && !!form.year
+    if (step === 2) return !!form.brand.trim() && !!form.model.trim() && !!form.year.trim()
     if (step === 3) return !!form.connector
-    if (step === 4) return !!form.name.trim() && !!form.plate.trim() && !!form.range
+    if (step === 4) return !!form.name.trim() && !!form.plate.trim() && !!form.range.trim()
     return true
   })()
 
   const handleBack = () => {
-    if (step === 1) router.back()
-    else setStep(step - 1)
+    if (step === 1) {
+      router.back()
+      return
+    }
+    setStep((current) => current - 1)
   }
 
   const handleContinue = () => {
-    if (step < totalSteps) {
-      setStep(step + 1)
-      return
-    }
+    if (step < totalSteps) setStep((current) => current + 1)
   }
 
   const handleFinish = () => {
     dispatch({
-      type: "SET_VEHICLE",
+      type: "ADD_VEHICLE",
       vehicle: {
-        id: "v-" + Date.now(),
+        id: `v-${Date.now()}`,
         type: form.type === "otro" ? form.customType : form.type,
         customType: form.customType,
         brand: form.brand,
@@ -127,11 +138,11 @@ export default function VehicleWizardPage() {
       },
     })
     dispatch({ type: "ADD_COINS", amount: 50 })
-    toast.success("Vehículo registrado", { description: "Ganaste 50 CumbrevaCoins por completar tu perfil." })
+    toast.success("Vehiculo registrado", {
+      description: "Ganaste 50 CumbrevaCoins por completar tu perfil.",
+    })
     router.replace("/inicio")
   }
-
-  const recommendedConnector = recommendedConnectorByBrand[form.brand] || null
 
   return (
     <PhoneFrame noBottomPad>
@@ -152,7 +163,12 @@ export default function VehicleWizardPage() {
 
         <div className="flex-1">
           {step === 1 && (
-            <Step1 type={form.type} customType={form.customType} onChange={(t) => update("type", t)} onCustom={(c) => update("customType", c)} />
+            <Step1
+              type={form.type}
+              customType={form.customType}
+              onChange={(value) => update("type", value)}
+              onCustom={(value) => update("customType", value)}
+            />
           )}
           {step === 2 && (
             <Step2
@@ -160,19 +176,21 @@ export default function VehicleWizardPage() {
               model={form.model}
               year={form.year}
               manualEntry={form.manualEntry}
-              onChange={(k, v) => update(k as keyof FormState, v as never)}
-              setManual={(v) => update("manualEntry", v)}
+              onChange={(key, value) => update(key as keyof FormState, value as never)}
+              setManual={(value) => update("manualEntry", value)}
             />
           )}
           {step === 3 && (
             <Step3
+              brand={form.brand}
+              model={form.model}
               connector={form.connector}
               hasAdapter={form.hasAdapter}
               adapters={form.adapters}
               recommended={recommendedConnector}
-              onConnector={(c) => update("connector", c)}
-              onAdapterToggle={(v) => update("hasAdapter", v)}
-              onAdapters={(a) => update("adapters", a)}
+              onConnector={(value) => update("connector", value)}
+              onAdapterToggle={(value) => update("hasAdapter", value)}
+              onAdapters={(value) => update("adapters", value)}
             />
           )}
           {step === 4 && (
@@ -182,7 +200,7 @@ export default function VehicleWizardPage() {
               color={form.color}
               range={form.range}
               photo={form.photo}
-              onChange={(k, v) => update(k as keyof FormState, v as never)}
+              onChange={(key, value) => update(key as keyof FormState, value as never)}
             />
           )}
           {step === 5 && <Step5 form={form} />}
@@ -195,7 +213,7 @@ export default function VehicleWizardPage() {
               disabled={!canContinue}
               className="h-14 w-full rounded-2xl bg-primary text-base font-semibold text-primary-foreground hover:bg-primary/90 disabled:bg-overlay-1 disabled:text-foreground-soft"
             >
-              {step === 4 ? "Guardar vehículo" : "Continuar"}
+              {step === 4 ? "Guardar vehiculo" : "Continuar"}
               <ArrowRight className="ml-1 h-5 w-5" />
             </Button>
           ) : (
@@ -212,12 +230,33 @@ export default function VehicleWizardPage() {
   )
 }
 
-function StepHeading({ title, subtitle }: { title: string; subtitle?: string }) {
+function StepHeading({
+  title,
+  subtitle,
+}: {
+  title: string
+  subtitle?: string
+}) {
   return (
     <div className="mb-6 animate-slide-up">
       <h1 className="text-balance text-2xl font-semibold leading-tight">{title}</h1>
       {subtitle && <p className="mt-2 text-sm text-foreground-muted">{subtitle}</p>}
     </div>
+  )
+}
+
+function HelperCard({
+  title,
+  text,
+}: {
+  title: string
+  text: string
+}) {
+  return (
+    <GlassCard className="mb-5 rounded-[24px] border border-border/70 bg-card/70 p-4">
+      <p className="text-sm font-semibold">{title}</p>
+      <p className="mt-1 text-xs leading-relaxed text-foreground-muted">{text}</p>
+    </GlassCard>
   )
 }
 
@@ -234,25 +273,25 @@ function Step1({
 }) {
   return (
     <>
-      <StepHeading title="¿Qué vehículo quieres registrar?" />
+      <StepHeading
+        title="Que vehiculo quieres registrar?"
+        subtitle="Primero identifiquemos el tipo de vehiculo para mostrarte cargadores y rutas acordes."
+      />
       <div className="grid grid-cols-2 gap-3">
         {types.map(({ id, label, Icon }) => (
           <button
             key={id}
             type="button"
             onClick={() => onChange(id)}
+            aria-pressed={type === id}
             className={cn(
               "flex min-h-[120px] flex-col items-start justify-between rounded-3xl border p-4 text-left transition-all",
               type === id
-                ? "border-primary/60 bg-primary/10 ring-2 ring-primary/40"
+                ? "border-primary/60 bg-primary/10 ring-2 ring-primary/30"
                 : "border-border bg-card hover:bg-overlay-hover",
             )}
-            aria-pressed={type === id}
           >
-            <Icon
-              className={cn("h-7 w-7", type === id ? "text-primary" : "text-foreground-muted")}
-              aria-hidden
-            />
+            <Icon className={cn("h-7 w-7", type === id ? "text-primary" : "text-foreground-muted")} />
             <span className="text-sm font-medium">{label}</span>
           </button>
         ))}
@@ -260,13 +299,13 @@ function Step1({
       {type === "otro" && (
         <div className="mt-5 animate-slide-up">
           <Label htmlFor="customType" className="text-foreground-muted">
-            Describe tu tipo de vehículo
+            Describe tu tipo de vehiculo
           </Label>
           <Input
             id="customType"
             value={customType}
-            onChange={(e) => onCustom(e.target.value)}
-            placeholder="Ej: Microbus eléctrico"
+            onChange={(event) => onCustom(event.target.value)}
+            placeholder="Ej: Microbus electrico"
             className="mt-2 h-14"
           />
         </div>
@@ -290,149 +329,145 @@ function Step2({
   onChange: (k: string, v: string) => void
   setManual: (v: boolean) => void
 }) {
-  const yearOptions = React.useMemo(
-    () => Array.from({ length: 12 }, (_, i) => String(2026 - i)),
-    [],
-  )
-  const brandData = vehicleCatalog.find((b) => b.brand === brand)
+  const yearOptions = React.useMemo(() => Array.from({ length: 12 }, (_, i) => String(2026 - i)), [])
+  const brandData = vehicleCatalog.find((item) => item.brand === brand)
 
   return (
     <>
-      <StepHeading title="Cuéntanos qué vehículo tienes" subtitle="Te sugerimos opciones a medida que escribes." />
+      <StepHeading
+        title="Completa tu vehiculo sin perderte"
+        subtitle="Organizamos esta parte en dos caminos: guiado con catalogo o ingreso manual."
+      />
+      <div className="mb-5 grid grid-cols-2 gap-3">
+        <ModeCard
+          active={!manualEntry}
+          title="Catalogo guiado"
+          text="Elige marca, modelo y ano con ayuda visual."
+          onClick={() => setManual(false)}
+        />
+        <ModeCard
+          active={manualEntry}
+          title="Ingreso manual"
+          text="Para vehiculos poco comunes o no listados."
+          onClick={() => setManual(true)}
+        />
+      </div>
 
       {!manualEntry ? (
-        <div className="space-y-4">
-          <div>
-            <Label className="text-foreground-muted">Marca</Label>
-            <div className="mt-2 flex flex-wrap gap-2">
-              {vehicleCatalog.map((b) => (
-                <button
-                  key={b.brand}
-                  type="button"
-                  onClick={() => {
-                    onChange("brand", b.brand)
-                    onChange("model", "")
-                  }}
-                  className={cn(
-                    "rounded-2xl border px-4 py-2 text-sm transition",
-                    brand === b.brand
-                      ? "border-primary/60 bg-primary/10 text-primary"
-                      : "border-border bg-card text-foreground hover:bg-overlay-hover",
-                  )}
-                >
-                  {b.brand}
-                </button>
-              ))}
+        <>
+          <HelperCard
+            title="Paso guiado"
+            text="Selecciona marca, luego modelo y por ultimo el ano. Solo te mostramos lo que sigue para que no se vuelva una lista dificil de leer."
+          />
+
+          <div className="space-y-5">
+            <div>
+              <Label className="text-foreground-muted">1. Marca</Label>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {vehicleCatalog.map((item) => (
+                  <button
+                    key={item.brand}
+                    type="button"
+                    onClick={() => {
+                      onChange("brand", item.brand)
+                      onChange("model", "")
+                      onChange("year", "")
+                    }}
+                    className={ChoiceClass(brand === item.brand)}
+                  >
+                    {item.brand}
+                  </button>
+                ))}
+              </div>
             </div>
+
+            {brandData && (
+              <div className="animate-slide-up">
+                <Label className="text-foreground-muted">2. Modelo</Label>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {brandData.models.map((item) => (
+                    <button
+                      key={item}
+                      type="button"
+                      onClick={() => {
+                        onChange("model", item)
+                        onChange("year", "")
+                      }}
+                      className={ChoiceClass(model === item)}
+                    >
+                      {item}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {model && (
+              <div className="animate-slide-up">
+                <Label className="text-foreground-muted">3. Ano</Label>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {yearOptions.map((item) => (
+                    <button
+                      key={item}
+                      type="button"
+                      onClick={() => onChange("year", item)}
+                      className={ChoiceClass(year === item)}
+                    >
+                      {item}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <SelectionResume brand={brand} model={model} year={year} />
           </div>
-
-          {brandData && (
-            <div className="animate-slide-up">
-              <Label className="text-foreground-muted">Modelo</Label>
-              <div className="mt-2 flex flex-wrap gap-2">
-                {brandData.models.map((m) => (
-                  <button
-                    key={m}
-                    type="button"
-                    onClick={() => onChange("model", m)}
-                    className={cn(
-                      "rounded-2xl border px-4 py-2 text-sm transition",
-                      model === m
-                        ? "border-primary/60 bg-primary/10 text-primary"
-                        : "border-border bg-card text-foreground hover:bg-overlay-hover",
-                    )}
-                  >
-                    {m}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {model && (
-            <div className="animate-slide-up">
-              <Label className="text-foreground-muted">Año</Label>
-              <div className="mt-2 flex flex-wrap gap-2">
-                {yearOptions.map((y) => (
-                  <button
-                    key={y}
-                    type="button"
-                    onClick={() => onChange("year", y)}
-                    className={cn(
-                      "rounded-2xl border px-4 py-2 text-sm transition",
-                      year === y
-                        ? "border-primary/60 bg-primary/10 text-primary"
-                        : "border-border bg-card text-foreground hover:bg-overlay-hover",
-                    )}
-                  >
-                    {y}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          <button
-            type="button"
-            onClick={() => setManual(true)}
-            className="text-sm text-primary hover:underline"
-          >
-            No encuentro mi vehículo
-          </button>
-        </div>
+        </>
       ) : (
-        <div className="space-y-4">
-          <div>
-            <Label htmlFor="brand" className="text-foreground-muted">
-              Marca
-            </Label>
-            <Input
-              id="brand"
-              value={brand}
-              onChange={(e) => onChange("brand", e.target.value)}
-              className="mt-2 h-14"
-            />
+        <>
+          <HelperCard
+            title="Ingreso manual"
+            text="Usa este modo si tu vehiculo no aparece o si prefieres escribir los datos directamente."
+          />
+          <div className="space-y-4">
+            <FieldBlock label="Marca" htmlFor="brand">
+              <Input
+                id="brand"
+                value={brand}
+                onChange={(event) => onChange("brand", event.target.value)}
+                className="mt-2 h-14"
+                placeholder="Ej: BYD"
+              />
+            </FieldBlock>
+            <FieldBlock label="Modelo" htmlFor="model">
+              <Input
+                id="model"
+                value={model}
+                onChange={(event) => onChange("model", event.target.value)}
+                className="mt-2 h-14"
+                placeholder="Ej: Seagull"
+              />
+            </FieldBlock>
+            <FieldBlock label="Ano" htmlFor="year">
+              <Input
+                id="year"
+                type="number"
+                value={year}
+                onChange={(event) => onChange("year", event.target.value)}
+                className="mt-2 h-14"
+                placeholder="2025"
+              />
+            </FieldBlock>
           </div>
-          <div>
-            <Label htmlFor="model" className="text-foreground-muted">
-              Modelo
-            </Label>
-            <Input
-              id="model"
-              value={model}
-              onChange={(e) => onChange("model", e.target.value)}
-              className="mt-2 h-14"
-            />
-          </div>
-          <div>
-            <Label htmlFor="year" className="text-foreground-muted">
-              Año
-            </Label>
-            <Input
-              id="year"
-              type="number"
-              value={year}
-              onChange={(e) => onChange("year", e.target.value)}
-              className="mt-2 h-14"
-            />
-          </div>
-          <p className="text-xs text-foreground-muted">
-            Si tu vehículo no aparece, puedes registrarlo manualmente.
-          </p>
-          <button
-            type="button"
-            onClick={() => setManual(false)}
-            className="text-sm text-primary hover:underline"
-          >
-            Volver a buscar marcas
-          </button>
-        </div>
+        </>
       )}
     </>
   )
 }
 
 function Step3({
+  brand,
+  model,
   connector,
   hasAdapter,
   adapters,
@@ -441,6 +476,8 @@ function Step3({
   onAdapterToggle,
   onAdapters,
 }: {
+  brand: string
+  model: string
   connector: string
   hasAdapter: boolean
   adapters: string[]
@@ -451,21 +488,33 @@ function Step3({
 }) {
   return (
     <>
-      <StepHeading title="Selecciona el conector de tu vehículo" subtitle="Esto nos ayuda a mostrar más electrolineras compatibles en el mapa." />
+      <StepHeading
+        title="Como se llena tu vehiculo?"
+        subtitle="Hicimos esta parte mas directa: primero el conector principal y despues los adaptadores, si aplica."
+      />
+      <HelperCard
+        title="Tu vehiculo actual"
+        text={
+          brand || model
+            ? `${brand} ${model}`.trim() + (recommended ? ` suele usar ${recommended}.` : ".")
+            : "Si aun no conoces el conector, elige la opcion de ayuda y luego te seguiremos guiando."
+        }
+      />
+
       <div className="space-y-2">
-        {connectors.map((c) => {
-          const isRecommended = recommended === c.id
-          const selected = connector === c.id
+        {connectors.map((item) => {
+          const selected = connector === item.id
+          const isRecommended = recommended === item.id
           return (
             <button
-              key={c.id}
+              key={item.id}
               type="button"
-              onClick={() => onConnector(c.id)}
+              onClick={() => onConnector(item.id)}
+              aria-pressed={selected}
               className={cn(
                 "flex w-full items-start gap-3 rounded-3xl border p-4 text-left transition",
                 selected ? "border-primary/60 bg-primary/10" : "border-border bg-card hover:bg-overlay-hover",
               )}
-              aria-pressed={selected}
             >
               <div
                 className={cn(
@@ -476,15 +525,16 @@ function Step3({
                 {selected && <Check className="h-3 w-3 text-primary-foreground" />}
               </div>
               <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-2">
-                  <span className="font-medium">{c.label}</span>
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="font-medium">{item.label}</span>
                   {isRecommended && (
                     <span className="inline-flex items-center gap-1 rounded-full bg-warning/15 px-2 py-0.5 text-[10px] font-medium text-warning">
-                      <Star className="h-3 w-3" /> Recomendado para tu vehículo
+                      <Star className="h-3 w-3" />
+                      Recomendado
                     </span>
                   )}
                 </div>
-                <p className="mt-0.5 text-xs text-foreground-muted">{c.desc}</p>
+                <p className="mt-0.5 text-xs text-foreground-muted">{item.desc}</p>
               </div>
             </button>
           )
@@ -494,45 +544,31 @@ function Step3({
       {connector === "no-seguro" && (
         <GlassCard className="mt-4 animate-slide-up">
           <p className="text-sm text-foreground">
-            Te ayudaremos a encontrar electrolineras compatibles según tu vehículo.
+            No pasa nada. Podras seguir usando la app y luego afinamos compatibilidades.
           </p>
         </GlassCard>
       )}
 
       <div className="mt-6 space-y-3">
-        <Label className="text-foreground-muted">¿Usas adaptador?</Label>
-        <div className="flex gap-2">
-          {[
-            { v: false, label: "No" },
-            { v: true, label: "Sí" },
-          ].map((o) => (
-            <button
-              key={String(o.v)}
-              type="button"
-              onClick={() => onAdapterToggle(o.v)}
-              className={cn(
-                "flex-1 rounded-2xl border px-4 py-3 text-sm transition",
-                hasAdapter === o.v
-                  ? "border-primary/60 bg-primary/10 text-primary"
-                  : "border-border bg-card text-foreground hover:bg-overlay-hover",
-              )}
-            >
-              {o.label}
-            </button>
-          ))}
+        <Label className="text-foreground-muted">Usas adaptador?</Label>
+        <div className="grid grid-cols-2 gap-2">
+          <button type="button" onClick={() => onAdapterToggle(false)} className={ChoiceClass(hasAdapter === false)}>
+            No
+          </button>
+          <button type="button" onClick={() => onAdapterToggle(true)} className={ChoiceClass(hasAdapter === true)}>
+            Si
+          </button>
         </div>
 
         {hasAdapter && (
           <div className="space-y-2 animate-slide-up">
-            {adapterOptions.map((a) => {
-              const checked = adapters.includes(a)
+            {adapterOptions.map((item) => {
+              const checked = adapters.includes(item)
               return (
                 <button
-                  key={a}
+                  key={item}
                   type="button"
-                  onClick={() =>
-                    onAdapters(checked ? adapters.filter((x) => x !== a) : [...adapters, a])
-                  }
+                  onClick={() => onAdapters(checked ? adapters.filter((value) => value !== item) : [...adapters, item])}
                   className={cn(
                     "flex w-full items-center gap-3 rounded-2xl border p-3 text-left transition",
                     checked ? "border-primary/60 bg-primary/10" : "border-border bg-card hover:bg-overlay-hover",
@@ -546,7 +582,7 @@ function Step3({
                   >
                     {checked && <Check className="h-3 w-3 text-primary-foreground" />}
                   </div>
-                  <span className="text-sm">{a}</span>
+                  <span className="text-sm">{item}</span>
                 </button>
               )
             })}
@@ -576,56 +612,54 @@ function Step4({
 
   return (
     <>
-      <StepHeading title="Personaliza tu vehículo" />
+      <StepHeading
+        title="Dale identidad a tu vehiculo"
+        subtitle="Solo pedimos lo necesario para personalizar recomendaciones y que reconozcas tu carro rapido."
+      />
       <div className="space-y-4">
-        <div>
-          <Label htmlFor="vname" className="text-foreground-muted">Nombre del vehículo</Label>
+        <FieldBlock label="Nombre del vehiculo" htmlFor="vname">
           <Input
             id="vname"
             value={name}
-            onChange={(e) => onChange("name", e.target.value)}
+            onChange={(event) => onChange("name", event.target.value)}
             placeholder="Mi BYD Seagull"
             className="mt-2 h-14"
           />
-        </div>
-        <div>
-          <Label htmlFor="plate" className="text-foreground-muted">Placa</Label>
+        </FieldBlock>
+        <FieldBlock label="Placa" htmlFor="plate">
           <Input
             id="plate"
             value={plate}
-            onChange={(e) => onChange("plate", e.target.value.toUpperCase())}
+            onChange={(event) => onChange("plate", event.target.value.toUpperCase())}
             placeholder="ABC123"
             className="mt-2 h-14 uppercase tracking-widest"
           />
-          <p className="mt-1.5 text-xs text-foreground-soft">Detección de placa próximamente.</p>
-        </div>
-        <div>
-          <Label htmlFor="color" className="text-foreground-muted">Color</Label>
+        </FieldBlock>
+        <FieldBlock label="Color" htmlFor="color">
           <Input
             id="color"
             value={color}
-            onChange={(e) => onChange("color", e.target.value)}
-            placeholder="Plata, Negro, Blanco..."
+            onChange={(event) => onChange("color", event.target.value)}
+            placeholder="Plata, negro, blanco"
             className="mt-2 h-14"
           />
-        </div>
-        <div>
-          <Label htmlFor="range" className="text-foreground-muted">Autonomía máxima al 100%</Label>
+        </FieldBlock>
+        <FieldBlock label="Autonomia maxima al 100%" htmlFor="range">
           <div className="mt-2 flex items-center gap-2">
             <Input
               id="range"
               type="number"
               value={range}
-              onChange={(e) => onChange("range", e.target.value)}
+              onChange={(event) => onChange("range", event.target.value)}
               placeholder="380"
               className="h-14 flex-1 rounded-2xl border-border bg-card text-base"
             />
             <span className="text-sm text-foreground-muted">km</span>
           </div>
           <p className="mt-1.5 text-xs text-foreground-soft">
-            Este dato viene del fabricante y nos ayuda a estimar rutas.
+            Usamos este dato del fabricante para estimar rutas sin sorpresas.
           </p>
-        </div>
+        </FieldBlock>
 
         <button
           type="button"
@@ -633,18 +667,13 @@ function Step4({
           className="flex w-full items-center gap-3 rounded-2xl border border-dashed border-border bg-card/50 p-4 text-left text-sm text-foreground-muted hover:bg-overlay-hover"
         >
           <Camera className="h-5 w-5" />
-          {photo ? "Cambiar foto del vehículo" : "Tomar foto de mi vehículo"}
+          {photo ? "Cambiar foto del vehiculo" : "Tomar foto de mi vehiculo"}
         </button>
-        {photo && (
-          <p className="text-xs text-foreground-soft">
-            Esta foto es solo para personalizar tu experiencia.
-          </p>
-        )}
       </div>
 
       {cameraOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-6"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-6 backdrop-blur-md"
           role="dialog"
           aria-modal="true"
         >
@@ -653,7 +682,7 @@ function Step4({
               <Camera className="h-12 w-12 text-foreground-muted" />
             </div>
             <p className="mb-4 text-center text-sm text-foreground-muted">
-              Toma una foto referencial. No se sube a ningún servidor.
+              Toma una foto referencial. No se sube a ningun servidor.
             </p>
             <div className="grid grid-cols-2 gap-2">
               <Button
@@ -683,23 +712,28 @@ function Step4({
 function Step5({ form }: { form: FormState }) {
   return (
     <>
-      <StepHeading title="Tu vehículo está listo." subtitle="Revisa los datos antes de continuar." />
+      <StepHeading
+        title="Tu vehiculo esta listo"
+        subtitle="Revisa todo antes de ir al inicio. Si algo no se ve bien, puedes volver y corregirlo."
+      />
       <GlassCard variant="strong" className="overflow-hidden p-0">
         <div className="map-pattern relative aspect-[16/9] w-full">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={form.photo || "/vehicle-byd-seagull-side-dark.jpg"}
-            alt={form.name || "Vehículo"}
+            alt={form.name || "Vehiculo"}
             className="absolute inset-0 h-full w-full object-cover"
           />
         </div>
         <div className="space-y-3 p-5">
           <Row label="Nombre" value={form.name || "Sin nombre"} />
-          <Row label="Placa" value={form.plate || "—"} mono />
-          <Row label="Marca y modelo" value={`${form.brand} ${form.model} ${form.year}`} />
-          <Row label="Conector principal" value={form.connector || "—"} />
-          <Row label="Adaptadores" value={form.hasAdapter && form.adapters.length ? form.adapters.join(", ") : "Ninguno"} />
-          <Row label="Autonomía máxima" value={`${form.range || 0} km`} />
+          <Row label="Placa" value={form.plate || "-"} mono />
+          <Row label="Marca y modelo" value={`${form.brand} ${form.model} ${form.year}`.trim() || "-"} />
+          <Row label="Conector principal" value={form.connector || "-"} />
+          <Row
+            label="Adaptadores"
+            value={form.hasAdapter && form.adapters.length ? form.adapters.join(", ") : "Ninguno"}
+          />
+          <Row label="Autonomia maxima" value={`${form.range || 0} km`} />
         </div>
       </GlassCard>
       <GlassCard className="mt-4 flex items-start gap-3">
@@ -708,18 +742,104 @@ function Step5({ form }: { form: FormState }) {
         </div>
         <div className="text-sm">
           <p className="font-medium">Ganaste 50 CumbrevaCoins</p>
-          <p className="text-xs text-foreground-muted">Por completar el registro de tu vehículo.</p>
+          <p className="text-xs text-foreground-muted">Por completar el registro de tu vehiculo.</p>
         </div>
       </GlassCard>
     </>
   )
 }
 
-function Row({ label, value, mono }: { label: string; value: string; mono?: boolean }) {
+function ModeCard({
+  active,
+  title,
+  text,
+  onClick,
+}: {
+  active: boolean
+  title: string
+  text: string
+  onClick: () => void
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={cn(
+        "rounded-[24px] border p-4 text-left transition",
+        active ? "border-primary/60 bg-primary/10 ring-2 ring-primary/20" : "border-border bg-card hover:bg-overlay-hover",
+      )}
+    >
+      <p className="text-sm font-semibold">{title}</p>
+      <p className="mt-1 text-xs leading-relaxed text-foreground-muted">{text}</p>
+    </button>
+  )
+}
+
+function SelectionResume({
+  brand,
+  model,
+  year,
+}: {
+  brand: string
+  model: string
+  year: string
+}) {
+  return (
+    <GlassCard className="rounded-[24px] border border-border/70 bg-card/60 p-4">
+      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-foreground-soft">
+        Resumen en vivo
+      </p>
+      <p className="mt-2 text-sm font-medium">
+        {[brand, model, year].filter(Boolean).join(" - ") || "Aun no has completado la seleccion"}
+      </p>
+      <p className="mt-1 text-xs text-foreground-muted">
+        Ver este resumen evita perderse entre muchas opciones.
+      </p>
+    </GlassCard>
+  )
+}
+
+function FieldBlock({
+  label,
+  htmlFor,
+  children,
+}: {
+  label: string
+  htmlFor: string
+  children: React.ReactNode
+}) {
+  return (
+    <div>
+      <Label htmlFor={htmlFor} className="text-foreground-muted">
+        {label}
+      </Label>
+      {children}
+    </div>
+  )
+}
+
+function ChoiceClass(active: boolean) {
+  return cn(
+    "rounded-2xl border px-4 py-3 text-sm transition",
+    active
+      ? "border-primary/60 bg-primary/10 text-primary"
+      : "border-border bg-card text-foreground hover:bg-overlay-hover",
+  )
+}
+
+function Row({
+  label,
+  value,
+  mono,
+}: {
+  label: string
+  value: string
+  mono?: boolean
+}) {
   return (
     <div className="flex items-center justify-between gap-3 border-b border-border/40 pb-2 last:border-0 last:pb-0">
       <span className="text-xs uppercase tracking-wider text-foreground-soft">{label}</span>
-      <span className={cn("text-sm font-medium text-right", mono && "font-mono")}>{value}</span>
+      <span className={cn("text-right text-sm font-medium", mono && "font-mono")}>{value}</span>
     </div>
   )
 }

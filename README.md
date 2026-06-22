@@ -24,6 +24,16 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
+## Android wrapper
+
+This repo now includes a Capacitor Android shell that loads the deployed web app inside an APK.
+
+1. Set `CAPACITOR_APP_URL` to the public URL you want to embed.
+2. Run `npm run mobile:android:sync`.
+3. Open Android Studio with `npm run mobile:android:open` or build from `android/`.
+
+For GitHub Actions, define the repository variable `CAPACITOR_APP_URL`. The workflow at `.github/workflows/android-apk.yml` will generate and upload a debug APK artifact.
+
 ## Learn More
 
 To learn more, take a look at the following resources:

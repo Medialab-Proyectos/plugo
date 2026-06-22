@@ -32,40 +32,56 @@ export function BatteryModal({
 
   const handleSave = () => {
     dispatch({ type: "SET_BATTERY", battery: value })
-    toast.success("Batería actualizada", { description: `Referencia: ${value}%` })
+    toast.success("Bateria actualizada", { description: `Referencia: ${value}%` })
     onOpenChange(false)
   }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-sm rounded-3xl border-border bg-popover">
+      <DialogContent className="w-[calc(100vw-2rem)] max-w-[480px] rounded-[28px] border-border bg-popover px-5">
         <DialogHeader>
-          <DialogTitle>Actualizar batería actual</DialogTitle>
+          <DialogTitle>Actualizar bateria actual</DialogTitle>
           <DialogDescription className="text-foreground-muted">
-            Este dato es manual y solo nos ayuda a mejorar las estimaciones.
+            Este dato es manual y nos ayuda a mejorar las estimaciones.
           </DialogDescription>
         </DialogHeader>
 
-        <div className="my-4 flex flex-col items-center gap-4">
-          <div className="text-5xl font-semibold tabular-nums tracking-tight text-gradient-primary">
-            {value}%
+        <div className="my-4 flex flex-col gap-4">
+          <div className="rounded-[24px] border border-border bg-card/70 px-4 py-5 text-center">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-foreground-soft">
+              Nivel actual
+            </p>
+            <div className="mt-2 text-5xl font-semibold tabular-nums tracking-tight text-gradient-primary">
+              {value}%
+            </div>
+            <p className="mt-2 text-xs text-foreground-muted">
+              Mantiene la misma separacion lateral que el resto de la aplicacion.
+            </p>
           </div>
-          <Slider
-            value={[value]}
-            min={0}
-            max={100}
-            step={1}
-            onValueChange={(v) => setValue(v[0])}
-            className="w-full"
-          />
-          <div className="flex w-full gap-2">
+
+          <div className="rounded-[24px] border border-border bg-card/60 p-4">
+            <p className="text-sm font-medium">Desliza o toca un valor rapido</p>
+            <p className="mt-1 text-xs text-foreground-muted">
+              Asi afinamos recomendaciones de carga, mapa y autonomia real.
+            </p>
+            <Slider
+              value={[value]}
+              min={0}
+              max={100}
+              step={1}
+              onValueChange={(v) => setValue(v[0])}
+              className="mt-5 w-full"
+            />
+          </div>
+
+          <div className="grid w-full grid-cols-4 gap-2">
             {chips.map((c) => (
               <button
                 key={c}
                 type="button"
                 onClick={() => setValue(c)}
                 className={cn(
-                  "flex-1 rounded-2xl border px-3 py-2 text-sm transition",
+                  "rounded-2xl border px-3 py-3 text-sm transition",
                   value === c
                     ? "border-primary/60 bg-primary/10 text-primary"
                     : "border-border bg-card text-foreground hover:bg-overlay-hover",
