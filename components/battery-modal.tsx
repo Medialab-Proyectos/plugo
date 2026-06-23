@@ -1,8 +1,10 @@
 "use client"
 
 import * as React from "react"
+import { X } from "lucide-react"
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogHeader,
@@ -38,12 +40,25 @@ export function BatteryModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-[calc(100vw-2rem)] max-w-[480px] rounded-[28px] border-border bg-popover px-5">
+      <DialogContent
+        showCloseButton={false}
+        className="w-[calc(100vw-2rem)] max-w-[480px] rounded-[28px] border-border bg-popover px-5"
+      >
         <DialogHeader>
-          <DialogTitle>Actualizar bateria actual</DialogTitle>
-          <DialogDescription className="text-foreground-muted">
-            Este dato es manual y nos ayuda a mejorar las estimaciones.
-          </DialogDescription>
+          <div className="flex items-start justify-between gap-3">
+            <div className="text-left">
+              <DialogTitle>Actualizar bateria actual</DialogTitle>
+              <DialogDescription className="mt-1 text-foreground-muted">
+                Este dato es manual y nos ayuda a mejorar las estimaciones.
+              </DialogDescription>
+            </div>
+            <DialogClose
+              aria-label="Cerrar"
+              className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-overlay-1 text-foreground-muted transition hover:bg-overlay-hover active:scale-90"
+            >
+              <X className="h-5 w-5" />
+            </DialogClose>
+          </div>
         </DialogHeader>
 
         <div className="my-4 flex flex-col gap-4">
@@ -93,12 +108,22 @@ export function BatteryModal({
           </div>
         </div>
 
-        <Button
-          onClick={handleSave}
-          className="h-12 w-full rounded-2xl bg-primary text-primary-foreground hover:bg-primary/90"
-        >
-          Guardar referencia
-        </Button>
+        <div className="flex gap-2">
+          <DialogClose asChild>
+            <Button
+              variant="secondary"
+              className="h-12 flex-1 rounded-2xl"
+            >
+              Ahora no
+            </Button>
+          </DialogClose>
+          <Button
+            onClick={handleSave}
+            className="h-12 flex-[1.6] rounded-2xl bg-primary text-primary-foreground hover:bg-primary/90"
+          >
+            Guardar referencia
+          </Button>
+        </div>
       </DialogContent>
     </Dialog>
   )

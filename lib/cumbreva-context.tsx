@@ -46,6 +46,7 @@ type State = {
 }
 
 type Action =
+  | { type: "HYDRATE"; state: Partial<State> }
   | { type: "LOGIN"; name: string }
   | { type: "LOGOUT" }
   | { type: "SET_VEHICLE"; vehicle: Vehicle }
@@ -131,6 +132,8 @@ const initialState: State = loggedOutState
 
 function reducer(state: State, action: Action): State {
   switch (action.type) {
+    case "HYDRATE":
+      return { ...state, ...action.state }
     case "LOGIN":
       return { ...loggedInState, hasSession: true, userName: action.name }
     case "LOGOUT":
@@ -178,28 +181,36 @@ const CumbrevaContext = React.createContext<{
 const STORAGE_KEY = "cumbreva:state:v2"
 
 export function CumbrevaProvider({ children }: { children: React.ReactNode }) {
-  const [state, dispatch] = React.useReducer(reducer, initialState, (init) => {
-    if (typeof window === "undefined") return init
-    try {
-      // Clear old storage keys
-      window.localStorage.removeItem("cumbreva:state:v1")
-      const raw = window.localStorage.getItem(STORAGE_KEY)
-      if (!raw) return init
-      const parsed = JSON.parse(raw) as State
-      return { ...init, ...parsed }
-    } catch {
-      return init
-    }
-  })
+  const [state, dispatch] = React.useReducer(reducer, initialState)
+  const [hydrated, setHydrated] = React.useState(false)
 
+  // El estado persistido se carga SOLO en el cliente, después de montar. Así el primer
+  // render coincide con el HTML del servidor (ambos usan initialState) y no se produce
+  // el "hydration mismatch". Leer localStorage durante el render lo rompía.
   React.useEffect(() => {
-    if (typeof window === "undefined") return
+    try {
+      window.localStorage.removeItem("cumbreva:state:v1") // limpia clave vieja
+      const raw = window.localStorage.getItem(STORAGE_KEY)
+      if (raw) dispatch({ type: "HYDRATE", state: JSON.parse(raw) as Partial<State> })
+    } catch {}
+    setHydrated(true)
+  }, [])
+
+  // Persiste solo una vez hidratado, para no pisar lo guardado con los valores por defecto.
+  React.useEffect(() => {
+    if (!hydrated) return
     try {
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
     } catch {}
-  }, [state])
+  }, [state, hydrated])
 
-  return <CumbrevaContext.Provider value={{ state, dispatch }}>{children}</CumbrevaContext.Provider>
+  // Hasta hidratar no renderizamos el contenido: evita un parpadeo del estado por
+  // defecto (p. ej. la pantalla vacía) antes de cargar lo guardado.
+  return (
+    <CumbrevaContext.Provider value={{ state, dispatch }}>
+      {hydrated ? children : null}
+    </CumbrevaContext.Provider>
+  )
 }
 
 export function useCumbreva() {

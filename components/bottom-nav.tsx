@@ -62,7 +62,7 @@ export function BottomNav() {
         aria-label="Navegación principal"
         className="fixed bottom-0 left-1/2 z-40 w-full max-w-[520px] -translate-x-1/2 px-4 pb-[max(env(safe-area-inset-bottom),12px)] md:hidden"
       >
-        <div className="relative grid grid-cols-5 rounded-full border border-[#dfe5eb] bg-white/88 shadow-[0_12px_36px_-24px_rgba(11,22,34,0.55)] backdrop-blur-xl">
+        <div className="relative grid grid-cols-5 rounded-full border border-border bg-popover/90 shadow-[0_12px_36px_-24px_rgba(11,22,34,0.55)] backdrop-blur-xl">
           <span
             aria-hidden
             className="nav-indicator pointer-events-none absolute inset-y-1.5 left-0 w-1/5"
@@ -81,7 +81,7 @@ export function BottomNav() {
                 className={cn(
                   "relative z-10 flex min-h-[56px] flex-col items-center justify-center gap-1 rounded-full px-1 py-2",
                   "transition-[color,transform] duration-200 active:scale-90",
-                  active ? "text-primary" : "text-[#637282] hover:text-[#0b1622]",
+                  active ? "text-primary" : "text-foreground-muted hover:text-foreground",
                 )}
               >
                 <Icon
